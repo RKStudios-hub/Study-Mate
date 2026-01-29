@@ -1,5 +1,5 @@
 {
-  "appId": "com.highfidelity.app",
-  "appName": "Study Mate 0.3 Alpha",
+  "appId": "com.studymate.app",
+  "appName": "Study Mate",
   "webDir": "dist"
 }

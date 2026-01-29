@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">HighFidelity</string>
-    <string name="title_activity_main">HighFidelity</string>
-    <string name="package_name">com.highfidelity.app</string>
-    <string name="custom_url_scheme">com.highfidelity.app</string>
+    <string name="app_name">Study Mate</string>
+    <string name="title_activity_main">Study Mate</string>
+    <string name="package_name">com.studymate.app</string>
+    <string name="custom_url_scheme">com.studymate.app</string>
 </resources>
