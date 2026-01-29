@@ -1,0 +1,21 @@
+.time-table-container { background: var(--dark-background); }
+.back-btn { color: var(--dark-text); background: var(--dark-card); }
+h1 { color: var(--dark-text); }
+
+.card { background: var(--dark-card); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+label { color: #999; }
+input, select { background: var(--dark-background); color: var(--dark-text); border: 1px solid #444; }
+
+.dot.active { border-color: #eee; }
+.add-btn { background: var(--dark-primary); }
+
+.calendar-card { background: var(--dark-card); border: 1px solid #444; }
+
+.time-col { background: #222; border-right: 1px solid #444; }
+.spacer { border-bottom: 1px solid #444; }
+.t-slot { color: #888; }
+
+.day-col { border-right: 1px solid #444; }
+.day-head { border-bottom: 1px solid #444; background: var(--dark-card); color: #ccc; }
+
+.task-plaque { border: 0.5px solid rgba(255,255,255,0.1); }

@@ -1,0 +1,18 @@
+.app { background: var(--dark-background); color: var(--dark-text); }
+.card { background-color: var(--dark-card); }
+.header { background-color: var(--dark-card); color: var(--dark-text); }
+.course { background-color: var(--dark-card); }
+.course:hover { background: rgba(255,255,255,0.1); }
+.add-btn { background: var(--dark-primary); }
+.top { color: var(--dark-text); }
+.summary div { color: var(--dark-text); }
+.month { color: var(--dark-text); }
+.day { background: #444; }
+.present { background: var(--green); }
+.absent { background: var(--red); }
+.half { background: var(--orange); }
+.modal { background: rgba(0, 0, 0, 0.5); }
+.box { background: var(--dark-card); color: var(--dark-text); }
+.box button { background: var(--dark-primary); }
+.attendance-back-button { background: var(--dark-card); color: var(--dark-primary); }
+.attendance-back-button:hover { background: rgba(79, 70, 229, 0.2); }
