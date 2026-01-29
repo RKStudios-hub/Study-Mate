@@ -41,7 +41,7 @@ export function FileViewerModal({ isOpen, onClose, file, fileDataUrl }: FileView
   }, []);
 
   const zoomOut = useCallback(() => {
-    setScale((prevScale) => Math.max(0.5, prevScale - 0.1));
+    setScale((prevScale) => Math.max(0.1, prevScale - 0.1));
   }, []);
 
   const rotateClockwise = useCallback(() => {
