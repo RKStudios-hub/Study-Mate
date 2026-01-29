@@ -82,7 +82,7 @@ export const usePersistentFiles = () => {
       recursive: true,
     }).catch(e => {
       // Ignore if directory already exists, specifically checking for the exact error message
-      if (e.message !== 'Current directory does already exist.' && e.message !== 'Path exists') {
+      if (e.message !== 'Current directory does already exist.' && e.message !== 'Path exists' && e.message !== `directory at '${FILES_BASE_DIR}' already exists, cannot be overwritten`) {
         console.error('Error creating base directory:', e);
         throw e;
       }
