@@ -330,10 +330,10 @@ const Layout: React.FC = () => {
         size: metadata.size,
         date: metadata.date,
       };
-      // No need to update folders here, useEffect dependent on persistentFiles will handle it
       return newFile;
     } catch (error) {
       console.error("Error in saveUploadedFile:", error);
+      alert(`Failed to upload file: ${(error as Error).message || 'Unknown error'}`);
       return undefined;
     }
   }, [savePersistentFile]);
