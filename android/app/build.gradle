@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace = "com.highfidelity.app"
+    namespace = "com.studymate.app"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.highfidelity.app"
+        applicationId "com.studymate.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -20,6 +20,16 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("keystore/studymate.jks")
+            storePassword "KEYSTORE_PASSWORD" // <--- REPLACE THIS WITH YOUR KEYSTORE PASSWORD
+            keyAlias "studymate"
+            keyPassword "KEY_ALIAS_PASSWORD" // <--- REPLACE THIS WITH YOUR KEY ALIAS PASSWORD
         }
     }
 }
