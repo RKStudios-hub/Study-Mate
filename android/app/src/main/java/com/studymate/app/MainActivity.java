@@ -1,4 +1,4 @@
-package com.highfidelity.app;
+package com.studymate.app;
 
 import com.getcapacitor.BridgeActivity;
 
