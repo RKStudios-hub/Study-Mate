@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle, X } from 'lucide-react';
+import React, { useEffect } from 'react';
 
 interface DeleteModalProps {
   isOpen: boolean;
@@ -10,6 +11,12 @@ interface DeleteModalProps {
 }
 
 export function DeleteModal({ isOpen, onClose, onConfirm, fileName, type = 'file' }: DeleteModalProps) {
+  useEffect(() => {
+    if (isOpen && 'vibrate' in navigator) {
+      navigator.vibrate([200]); // Vibrate for 200 milliseconds
+    }
+  }, [isOpen]);
+
   return (
     <AnimatePresence>
       {isOpen && (
