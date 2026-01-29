@@ -183,8 +183,8 @@ export function FileViewerModal({ isOpen, onClose, file, fileDataUrl }: FileView
   }, [file, fileDataUrl, numPages, onDocumentLoadSuccess, pageNumber, scale, rotation, goToPrevPage, goToNextPage, zoomIn, zoomOut, rotateClockwise, rotateCounterClockwise]);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-70 p-4">
-      <div className="relative bg-white rounded-lg shadow-xl max-w-[90vw] max-h-[90vh] w-fit h-fit min-w-[300px] min-h-[200px] flex flex-col">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-gradient-to-br from-purple-500 via-pink-500 to-white bg-opacity-70 p-4">
+      <div className="relative bg-white rounded-lg shadow-xl max-w-[90vw] max-h-[90vh] w-fit h-fit min-w-[1%] min-h-[1%] flex flex-col">
         <div className="flex justify-between items-center p-4 border-b">
           <h2 className="text-lg font-semibold truncate">{file.name}</h2>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
