@@ -26,7 +26,7 @@ const Layout: React.FC = () => {
     const savedTime = localStorage.getItem('timeStudied');
     return savedTime ? parseInt(savedTime, 10) : 0;
   });
-  const [isRunning, setIsRunning] = useState(false);
+  const [isRunning, setIsRunning] = useState(true);
 
   // Folders state will now be derived from persistentFiles
   const [folders, setFolders] = useState<Folder[]>(() => {
