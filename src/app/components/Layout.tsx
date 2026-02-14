@@ -11,9 +11,36 @@ import { usePersistentFiles } from '../../hooks/usePersistentFiles'; // Import t
 const Layout: React.FC = () => {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem('isDarkMode');
+    return saved ? JSON.parse(saved) : false;
+  });
 
-  // Initialize persistent file management
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem('theme');
+    return saved || 'kawaii';
+  });
+
+  useEffect(() => {
+    document.body.setAttribute('data-theme', theme === 'kawaii' ? '' : theme);
+  }, [theme]);
+
+  const [rssFeeds, setRssFeeds] = useState<RssFeed[]>(() => {
+    const saved = localStorage.getItem('rssFeeds');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [folders, setFolders] = useState<Folder[]>(() => {
+    const saved = localStorage.getItem('folders');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [timeStudied, setTimeStudied] = useState<number>(() => {
+    const saved = localStorage.getItem('timeStudied');
+    return saved ? parseInt(saved, 10) : 0;
+  });
+  const [isRunning, setIsRunning] = useState(true);
+
   const {
     persistentFiles,
     isLoading: isPersistentFilesLoading,
@@ -22,119 +49,30 @@ const Layout: React.FC = () => {
     deletePersistentFile,
   } = usePersistentFiles();
 
-  const [timeStudied, setTimeStudied] = useState<number>(() => {
-    const savedTime = localStorage.getItem('timeStudied');
-    return savedTime ? parseInt(savedTime, 10) : 0;
-  });
-  const [isRunning, setIsRunning] = useState(true);
-
-  // Folders state will now be derived from persistentFiles
-  const [folders, setFolders] = useState<Folder[]>(() => {
-    // Initial state will be empty or loaded from localStorage,
-    // but actual files will come from persistentFiles after they load.
-    const savedFolders = localStorage.getItem('folders');
-    if (savedFolders) {
-      const parsedFolders: Folder[] = JSON.parse(savedFolders);
-      const ensureFoldersArray = (items: Folder[]): Folder[] => {
-        return items.map(item => ({
-          ...item,
-          folders: item.folders ? ensureFoldersArray(item.folders) : [],
-          files: item.files || [],
-          isExpanded: item.isExpanded || false,
-        }));
-      };
-      return ensureFoldersArray(parsedFolders);
-    }
-    return [];
-  });
-
-  // Reconstruct folders with persistent files once persistentFiles are loaded
   useEffect(() => {
-    if (!isPersistentFilesLoading) {
-      const buildFoldersWithPersistentFiles = (currentFolders: Folder[]): Folder[] => {
-        return currentFolders.map(folder => {
-          const filesInFolder = persistentFiles.filter(pf => pf.folderId === folder.id)
-            .map(pf => ({
-              id: pf.id,
-              name: pf.name,
-              persistentPath: pf.persistentPath,
-              type: pf.type,
-              size: pf.size,
-              date: pf.date,
-            }));
-          return {
-            ...folder,
-            files: filesInFolder,
-            folders: buildFoldersWithPersistentFiles(folder.folders),
-          };
-        });
-      };
-      // Only set folders if they haven't been populated from persistentFiles yet
-      // This prevents overwriting user-created folder structure on every persistentFiles change
-      if (folders.every(f => f.files.length === 0) && persistentFiles.length > 0) {
-         // Create a default "My Files" folder if none exist but persistent files do
-        if (folders.length === 0 && persistentFiles.length > 0) {
-          const defaultFolderId = 'default-my-files';
-          const defaultFolder: Folder = {
-            id: defaultFolderId,
-            name: 'My Files',
-            files: persistentFiles.filter(pf => pf.folderId === defaultFolderId).map(pf => ({
-              id: pf.id,
-              name: pf.name,
-              persistentPath: pf.persistentPath,
-              type: pf.type,
-              size: pf.size,
-              date: pf.date,
-            })),
-            folders: [],
-            isExpanded: true,
-            color: '#6B46C1', // Purple
-          };
-          setFolders([defaultFolder]);
-        } else {
-          setFolders(buildFoldersWithPersistentFiles(folders));
-        }
-      } else if (persistentFiles.length === 0 && folders.some(f => f.files.length > 0)) {
-        // If all persistent files are deleted, clear files from folders state
-         const clearFilesInFolders = (currentFolders: Folder[]): Folder[] => {
-           return currentFolders.map(folder => ({
-             ...folder,
-             files: [],
-             folders: clearFilesInFolders(folder.folders),
-           }));
-         };
-         setFolders(clearFilesInFolders(folders));
-      } else {
-        // This handles cases where only file properties change or files are added/deleted
-        // without affecting the folder structure, ensuring files in state match persistentFiles
-        const updateFilesInFolders = (currentFolders: Folder[]): Folder[] => {
-          return currentFolders.map(folder => {
-            const filesInFolder = persistentFiles.filter(pf => pf.folderId === folder.id)
-              .map(pf => ({
-                id: pf.id,
-                name: pf.name,
-                persistentPath: pf.persistentPath,
-                type: pf.type,
-                size: pf.size,
-                date: pf.date,
-              }));
-            return {
-              ...folder,
-              files: filesInFolder,
-              folders: updateFilesInFolders(folder.folders),
-            };
-          });
-        };
-        setFolders(updateFilesInFolders(folders));
-      }
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
     }
-  }, [persistentFiles, isPersistentFilesLoading]);
+  }, []);
 
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('isDarkMode', JSON.stringify(isDarkMode));
+  }, [isDarkMode]);
 
-  const [rssFeeds, setRssFeeds] = useState<RssFeed[]>(() => {
-    const savedRssFeeds = localStorage.getItem('rssFeeds');
-    return savedRssFeeds ? JSON.parse(savedRssFeeds) : [];
-  });
+  useEffect(() => {
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  useEffect(() => {
+    localStorage.setItem('rssFeeds', JSON.stringify(rssFeeds));
+  }, [rssFeeds]);
 
   const addRssFeed = (feed: RssFeed) => {
     setRssFeeds(prev => [...prev, feed]);
@@ -147,18 +85,6 @@ const Layout: React.FC = () => {
   const deleteRssFeed = (id: string) => {
     setRssFeeds(prev => prev.filter(feed => feed.id !== id));
   };
-
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDarkMode]);
-
-  useEffect(() => {
-    localStorage.setItem('rssFeeds', JSON.stringify(rssFeeds));
-  }, [rssFeeds]);
 
   // Persist folders structure to localStorage (files content handled by usePersistentFiles)
   useEffect(() => {
@@ -348,10 +274,16 @@ const Layout: React.FC = () => {
   }, [deletePersistentFile]);
 
   return (
-    <div className="min-h-screen relative overflow-hidden pb-20 bg-white dark:bg-dark-background">
+    <div className="min-h-screen relative overflow-hidden pb-20" style={{ background: 'transparent' }}>
+      <div className="fixed inset-0 -z-10" style={{ 
+        background: 'linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%)',
+        transition: 'background 0.3s ease'
+      }} />
+      
       <Sidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
+        theme={theme}
       />
 
       <main className="min-h-screen">
@@ -380,12 +312,14 @@ const Layout: React.FC = () => {
           formatTotalStudyTime,
           isDarkMode,
           setIsDarkMode,
+          theme,
+          setTheme,
           saveUploadedFile, // New
           deleteUploadedFile, // New
         } as OutletContext} />
       </main>
 
-      <BottomNav />
+      <BottomNav theme={theme} />
 
       {/* File Viewer Modal */}
       <FileViewerModal

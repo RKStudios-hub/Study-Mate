@@ -86,25 +86,25 @@ export function FileViewerModal({ isOpen, onClose, file, fileDataUrl }: FileView
       case 'pdf':
         return (
           <div className="pdf-container overflow-auto w-full h-full">
-            <div className="pdf-controls flex justify-center items-center gap-2 p-2 bg-gray-100 rounded-md mb-2">
-              <button onClick={goToPrevPage} disabled={pageNumber <= 1} className="p-1 rounded-full bg-gray-200 hover:bg-gray-300 h-8 w-8 flex items-center justify-center">
+            <div className="pdf-controls flex justify-center items-center gap-2 p-2 rounded-md mb-2" style={{ background: 'var(--input-bg)' }}>
+              <button onClick={goToPrevPage} disabled={pageNumber <= 1} className="p-1 rounded-full h-8 w-8 flex items-center justify-center" style={{ background: 'var(--secondary)', color: 'var(--text-color)' }}>
                 <ChevronLeft size={20} />
               </button>
-              <span className="text-sm">Page {pageNumber} of {numPages || '--'}</span>
-              <button onClick={goToNextPage} disabled={pageNumber >= (numPages || 1)} className="p-1 rounded-full bg-gray-200 hover:bg-gray-300 h-8 w-8 flex items-center justify-center">
+              <span className="text-sm" style={{ color: 'var(--text-color)' }}>Page {pageNumber} of {numPages || '--'}</span>
+              <button onClick={goToNextPage} disabled={pageNumber >= (numPages || 1)} className="p-1 rounded-full h-8 w-8 flex items-center justify-center" style={{ background: 'var(--secondary)', color: 'var(--text-color)' }}>
                 <ChevronRight size={20} />
               </button>
-              <button onClick={zoomOut} className="p-1 rounded-full bg-gray-200 hover:bg-gray-300 h-8 w-8 flex items-center justify-center">
+              <button onClick={zoomOut} className="p-1 rounded-full h-8 w-8 flex items-center justify-center" style={{ background: 'var(--secondary)', color: 'var(--text-color)' }}>
                 <ZoomOut size={20} />
               </button>
-              <span className="text-sm">{(scale * 100).toFixed(0)}%</span>
-              <button onClick={zoomIn} className="p-1 rounded-full bg-gray-200 hover:bg-gray-300 h-8 w-8 flex items-center justify-center">
+              <span className="text-sm" style={{ color: 'var(--text-color)' }}>{(scale * 100).toFixed(0)}%</span>
+              <button onClick={zoomIn} className="p-1 rounded-full h-8 w-8 flex items-center justify-center" style={{ background: 'var(--secondary)', color: 'var(--text-color)' }}>
                 <ZoomIn size={20} />
               </button>
-              <button onClick={rotateCounterClockwise} className="p-1 rounded-full bg-gray-200 hover:bg-gray-300 h-8 w-8 flex items-center justify-center">
+              <button onClick={rotateCounterClockwise} className="p-1 rounded-full h-8 w-8 flex items-center justify-center" style={{ background: 'var(--secondary)', color: 'var(--text-color)' }}>
                 <RotateCcw size={20} />
               </button>
-              <button onClick={rotateClockwise} className="p-1 rounded-full bg-gray-200 hover:bg-gray-300 h-8 w-8 flex items-center justify-center">
+              <button onClick={rotateClockwise} className="p-1 rounded-full h-8 w-8 flex items-center justify-center" style={{ background: 'var(--secondary)', color: 'var(--text-color)' }}>
                 <RotateCw size={20} />
               </button>
             </div>
@@ -179,11 +179,11 @@ export function FileViewerModal({ isOpen, onClose, file, fileDataUrl }: FileView
   }, [file, fileDataUrl, numPages, onDocumentLoadSuccess, pageNumber, scale, rotation, goToPrevPage, goToNextPage, zoomIn, zoomOut, rotateClockwise, rotateCounterClockwise]);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-gradient-to-br from-purple-500 via-pink-500 to-white bg-opacity-70 p-4">
-      <div className="relative bg-white rounded-lg shadow-xl max-w-[90vw] max-h-[90vh] w-fit h-fit min-w-[1%] min-h-[1%] flex flex-col">
-        <div className="flex justify-between items-center p-4 border-b">
-          <h2 className="text-lg font-semibold truncate">{file.name}</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" style={{ background: 'linear-gradient(135deg, var(--accent-light) 0%, var(--secondary-light) 100%)' }}>
+      <div className="relative rounded-lg shadow-xl max-w-[90vw] max-h-[90vh] w-fit h-fit min-w-[1%] min-h-[1%] flex flex-col" style={{ background: 'var(--card-bg)' }}>
+        <div className="flex justify-between items-center p-4 border-b" style={{ borderColor: 'var(--border-color)' }}>
+          <h2 className="text-lg font-semibold truncate" style={{ color: 'var(--text-color)' }}>{file.name}</h2>
+          <button onClick={onClose} className="rounded-lg transition-colors p-1" style={{ color: 'var(--text-muted)' }}>
             <X size={24} />
           </button>
         </div>

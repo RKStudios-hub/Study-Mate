@@ -115,17 +115,18 @@ export function FolderCard({
     <div
       className="rounded-3xl overflow-hidden"
       style={{
-        background: 'rgba(255, 255, 255, 0.4)',
+        background: 'var(--card-bg)',
         backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(255, 255, 255, 0.5)',
+        border: '1px solid var(--border-color)',
         boxShadow: '0 4px 16px rgba(0, 0, 0, 0.05)',
-        marginLeft: `${level * 20}px`, // Indentation for subfolders
+        marginLeft: `${level * 20}px`,
       }}
     >
       {/* Folder Header */}
       <button
         onClick={handleToggleExpand}
-        className="w-full px-4 py-4 flex items-center gap-3 hover:bg-white/20 transition-colors"
+        className="w-full px-4 py-4 flex items-center gap-3 transition-colors"
+        style={{ background: 'transparent' }}
         onTouchStart={handleFolderLongPressStart}
         onTouchEnd={handleFolderLongPressEnd}
       >
@@ -139,15 +140,15 @@ export function FolderCard({
           <Folder className="w-5 h-5 text-white" />
         </div>
         <div className="flex-1 text-left min-w-0">
-          <h4 className="text-slate-800 font-medium text-sm truncate">{folder.name}</h4>
-          <p className="text-slate-500 text-xs">
+          <h4 className="font-medium text-sm truncate" style={{ color: 'var(--text-color)' }}>{folder.name}</h4>
+          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
             {folder.files.length + (folder.folders ? folder.folders.length : 0)} items
           </p>
         </div>
         {isExpanded ? (
-          <ChevronDown className="w-5 h-5 text-slate-600 flex-shrink-0" />
+          <ChevronDown className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--text-muted)' }} />
         ) : (
-          <ChevronRight className="w-5 h-5 text-slate-600 flex-shrink-0" />
+          <ChevronRight className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--text-muted)' }} />
         )}
       </button>
 
@@ -159,19 +160,29 @@ export function FolderCard({
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="border-t border-white/30"
+            className="border-t"
+            style={{ borderColor: 'var(--border-color)' }}
           >
             <div className="px-6 py-4 space-y-2">
               {/* Action Buttons for files and subfolders */}
               <div className="flex gap-2 mb-4">
                 <button
                   onClick={() => onCreateSubfolder(folder.id)}
-                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-purple-600 bg-purple-50 hover:bg-purple-100 transition-colors text-sm font-medium"
+                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl transition-colors text-sm font-medium"
+                  style={{
+                    background: 'var(--accent-light)',
+                    color: 'var(--accent-dark)',
+                  }}
                 >
                   <FolderPlus className="w-4 h-4" />
                   <span>Subfolder</span>
                 </button>
-                <label className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors text-sm font-medium cursor-pointer">
+                <label className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl transition-colors text-sm font-medium cursor-pointer"
+                  style={{
+                    background: 'var(--info)',
+                    color: 'white',
+                  }}
+                >
                   <UploadCloud className="w-4 h-4" />
                   <span>Upload Files</span>
                   <input type="file" multiple className="hidden" onChange={handleFileChange} ref={fileInputRef} />
@@ -185,28 +196,29 @@ export function FolderCard({
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/30 transition-all group cursor-pointer"
+                  className="flex items-center gap-3 p-3 rounded-xl transition-all group cursor-pointer"
                   style={{
                     background: getFileColor(file.type),
                   }}
                   onTouchStart={() => handleFileLongPressStart(file.id)}
                   onTouchEnd={handleFileLongPressEnd}
-                  onClick={() => onOpenFile && onOpenFile(file)} // Open file if url exists
+                  onClick={() => onOpenFile && onOpenFile(file)}
                 >
                   <div className="flex-shrink-0">
                     {getFileIcon(file.type)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-slate-800 text-sm font-medium truncate">{file.name}</p>
-                    <p className="text-slate-500 text-xs">
+                    <p className="text-sm font-medium truncate" style={{ color: 'var(--text-color)' }}>{file.name}</p>
+                    <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
                       {file.size} • {file.date}
                     </p>
                   </div>
                   <button
                     onClick={(e) => { e.stopPropagation(); onDeleteFile(folder.id, file.id); }}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-red-100 rounded-lg"
+                    className="opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded-lg"
+                    style={{ background: 'var(--destructive)' }}
                   >
-                    <Trash2 className="w-4 h-4 text-red-500" />
+                    <Trash2 className="w-4 h-4" style={{ color: 'var(--destructive-foreground)' }} />
                   </button>
                 </motion.div>
               ))}
@@ -227,10 +239,10 @@ export function FolderCard({
 
               {!hasContent && (
                 <div className="py-8 text-center">
-                  <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-slate-100 flex items-center justify-center">
-                    <Folder className="w-8 h-8 text-slate-400" />
+                  <div className="w-16 h-16 mx-auto mb-3 rounded-full flex items-center justify-center" style={{ background: 'var(--input-bg)' }}>
+                    <Folder className="w-8 h-8" style={{ color: 'var(--text-muted)' }} />
                   </div>
-                  <p className="text-slate-500 text-sm mb-2">This folder is empty</p>
+                  <p className="text-sm mb-2" style={{ color: 'var(--text-muted)' }}>This folder is empty</p>
                 </div>
               )}
             </div>

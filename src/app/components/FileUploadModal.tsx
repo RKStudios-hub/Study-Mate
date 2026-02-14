@@ -68,7 +68,8 @@ export function FileUploadModal({ isOpen, onClose, onConfirm, folders }: FileUpl
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50"
+            className="fixed inset-0 backdrop-blur-sm z-50"
+            style={{ background: 'rgba(0, 0, 0, 0.4)' }}
           />
           
           {/* Modal */}
@@ -82,33 +83,40 @@ export function FileUploadModal({ isOpen, onClose, onConfirm, folders }: FileUpl
             <div
               className="mx-auto max-w-lg rounded-t-3xl p-6"
               style={{
-                background: 'rgba(255, 255, 255, 0.95)',
+                background: 'var(--card-bg)',
                 backdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255, 255, 255, 0.5)',
+                border: '1px solid var(--border-color)',
                 boxShadow: '0 -8px 32px rgba(0, 0, 0, 0.1)',
               }}
             >
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-semibold text-slate-900">Upload Files</h3>
+                <h3 className="text-xl font-semibold" style={{ color: 'var(--text-color)' }}>Upload Files</h3>
                 <button
                   onClick={onClose}
-                  className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                  className="p-2 rounded-lg transition-colors"
+                  style={{ color: 'var(--text-muted)' }}
                 >
-                  <X className="w-5 h-5 text-slate-400" />
+                  <X className="w-5 h-5" />
                 </button>
               </div>
 
               <div className="space-y-5">
                 {/* Folder Selection */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-color)' }}>
                     Select Folder
                   </label>
                   <select
                     value={selectedFolderId}
                     onChange={(e) => setSelectedFolderId(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500 text-slate-900"
-                    disabled={flattenedFolders.length === 0} // Disable if no folders
+                    className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2"
+                    style={{
+                      borderColor: 'var(--border-color)',
+                      background: 'var(--input-bg)',
+                      color: 'var(--text-color)',
+                      '--tw-ring-color': 'var(--accent-color)',
+                    } as React.CSSProperties}
+                    disabled={flattenedFolders.length === 0}
                   >
                     {flattenedFolders.length === 0 && (
                         <option value="" disabled>No folders available</option>
@@ -123,14 +131,18 @@ export function FileUploadModal({ isOpen, onClose, onConfirm, folders }: FileUpl
 
                 {/* File Upload */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-color)' }}>
                     Choose Files
                   </label>
                   <label
-                    className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors"
+                    className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer transition-colors"
+                    style={{
+                      borderColor: 'var(--border-color)',
+                      background: 'var(--input-bg)',
+                    }}
                   >
-                    <Upload className="w-8 h-8 text-slate-400 mb-2" />
-                    <span className="text-sm text-slate-600">
+                    <Upload className="w-8 h-8 mb-2" style={{ color: 'var(--text-muted)' }} />
+                    <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
                       {selectedFiles.length > 0 
                         ? `${selectedFiles.length} file(s) selected` 
                         : 'Tap to select files'}
@@ -140,7 +152,7 @@ export function FileUploadModal({ isOpen, onClose, onConfirm, folders }: FileUpl
                       multiple
                       onChange={handleFileChange}
                       className="hidden"
-                      accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.gif,.webp,.svg,.mp3,.mp4" // Updated accept attribute
+                      accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.gif,.webp,.svg,.mp3,.mp4"
                     />
                   </label>
                 </div>
@@ -151,12 +163,13 @@ export function FileUploadModal({ isOpen, onClose, onConfirm, folders }: FileUpl
                     {selectedFiles.map((file, index) => (
                       <div
                         key={index}
-                        className="flex items-center gap-2 p-2 rounded-lg bg-slate-50"
+                        className="flex items-center gap-2 p-2 rounded-lg"
+                        style={{ background: 'var(--input-bg)' }}
                       >
-                        <FileText className="w-4 h-4 text-slate-600" />
+                        <FileText className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm text-slate-900 truncate">{file.name}</p>
-                          <p className="text-xs text-slate-500">{formatFileSize(file.size)}</p>
+                          <p className="text-sm truncate" style={{ color: 'var(--text-color)' }}>{file.name}</p>
+                          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{formatFileSize(file.size)}</p>
                         </div>
                       </div>
                     ))}
@@ -167,16 +180,22 @@ export function FileUploadModal({ isOpen, onClose, onConfirm, folders }: FileUpl
                 <div className="flex gap-3 pt-2">
                   <button
                     onClick={onClose}
-                    className="flex-1 px-4 py-3 rounded-xl border border-slate-300 text-slate-700 font-medium hover:bg-slate-50 transition-colors"
+                    className="flex-1 px-4 py-3 rounded-xl border font-medium transition-colors"
+                    style={{
+                      borderColor: 'var(--border-color)',
+                      color: 'var(--text-color)',
+                      background: 'transparent',
+                    }}
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSubmit}
                     disabled={selectedFiles.length === 0 || !selectedFolderId}
-                    className="flex-1 px-4 py-3 rounded-xl text-white font-medium transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+                    className="flex-1 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
                     style={{
-                      background: 'linear-gradient(135deg, #6D5BFF 0%, #8B7AFF 100%)',
+                      background: 'linear-gradient(135deg, var(--accent-color) 0%, var(--accent-dark) 100%)',
+                      color: 'white',
                     }}
                   >
                     Upload Files

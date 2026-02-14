@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { OutletContext, RssFeed } from '../../types';
-import { Plus, Edit, Trash2, Save } from 'lucide-react';
+import { Plus, Edit, Trash2, Save, Moon, Sun, Sparkles } from 'lucide-react';
 import SettingsSection from '../components/SettingsSection';
 
+const themes = [
+  { id: 'kawaii', name: 'Kawaii', icon: '🌸', color: '#f472b6' },
+  { id: 'royal', name: 'Royal', icon: '👑', color: '#9d6dff' },
+  { id: 'catpuccin', name: 'Catpuccin', icon: '🐱', color: '#89b4fa' },
+  { id: 'frappe', name: 'Frappe', icon: '🍵', color: '#81c8be' },
+];
+
 export default function SettingsPage() {
-  const { rssFeeds, addRssFeed, updateRssFeed, deleteRssFeed, isDarkMode, setIsDarkMode } = useOutletContext<OutletContext>();
+  const { rssFeeds, addRssFeed, updateRssFeed, deleteRssFeed, isDarkMode, setIsDarkMode, theme, setTheme } = useOutletContext<OutletContext>();
   const [newFeedName, setNewFeedName] = useState('');
   const [newFeedUrl, setNewFeedUrl] = useState('');
   const [editingFeedId, setEditingFeedId] = useState<string | null>(null);
@@ -56,58 +63,80 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="px-4 py-4 bg-white dark:bg-dark-background">
-      <h1 className="text-2xl font-bold text-slate-800 dark:text-dark-text mb-6">Settings</h1>
+    <div className="px-4 py-4">
+      <h1 className="text-2xl font-bold mb-6" style={{ color: 'var(--text-color)' }}>Settings</h1>
 
       <SettingsSection title="Appearance">
-        <div className="flex items-center justify-between">
-          <span className="text-slate-600 dark:text-dark-text">Dark Mode</span>
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" checked={isDarkMode} onChange={() => {
-              console.log('isDarkMode before:', isDarkMode);
-              setIsDarkMode(!isDarkMode);
-              console.log('isDarkMode after:', !isDarkMode);
-            }} className="sr-only peer" />
-            <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-purple-300 dark:peer-focus:ring-purple-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
-          </label>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-3" style={{ color: 'var(--text-muted)' }}>Theme</label>
+            <div className="grid grid-cols-2 gap-3">
+              {themes.map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => setTheme(t.id)}
+                  className={`p-3 rounded-xl border-2 transition-all flex items-center gap-3 ${
+                    theme === t.id 
+                      ? 'border-[var(--accent-color)] bg-[var(--accent-light)]/20' 
+                      : 'border-[var(--border-color)] hover:border-[var(--accent-color)]/50'
+                  }`}
+                  style={{ 
+                    backgroundColor: theme === t.id ? `${t.color}20` : 'var(--input-bg)',
+                    borderColor: theme === t.color ? '' : ''
+                  }}
+                >
+                  <span className="text-2xl">{t.icon}</span>
+                  <span className="font-medium" style={{ color: 'var(--text-color)' }}>{t.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          <div className="flex items-center justify-between pt-2">
+            <span style={{ color: 'var(--text-muted)' }}>Dark Mode</span>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" checked={isDarkMode} onChange={() => setIsDarkMode(!isDarkMode)} className="sr-only peer" />
+              <div className="w-11 h-6 bg-[var(--input-bg)] rounded-full peer peer-focus:ring-2 peer-focus:ring-[var(--accent-color)] peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all" style={{ backgroundColor: isDarkMode ? 'var(--accent-color)' : 'var(--input-bg)' }}></div>
+            </label>
+          </div>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-slate-600 dark:text-dark-text">Font Style</span>
-          <select value={fontStyle} onChange={(e) => setFontStyle(e.target.value)} className="px-3 py-1 border rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-200 bg-white dark:bg-dark-card dark:text-dark-text">
+          <span style={{ color: 'var(--text-muted)' }}>Font Style</span>
+          <select value={fontStyle} onChange={(e) => setFontStyle(e.target.value)} className="px-3 py-1 border rounded-lg focus:outline-none focus:ring-1" style={{ backgroundColor: 'var(--input-bg)', color: 'var(--text-color)', borderColor: 'var(--border-color)' }}>
             <option>Default</option>
             <option>Serif</option>
             <option>Monospace</option>
           </select>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-slate-600 dark:text-dark-text">Glass Effect</span>
+          <span style={{ color: 'var(--text-muted)' }}>Glass Effect</span>
           <label className="relative inline-flex items-center cursor-pointer">
             <input type="checkbox" checked={isGlassEffect} onChange={() => setIsGlassEffect(!isGlassEffect)} className="sr-only peer" />
-            <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-purple-300 dark:peer-focus:ring-purple-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+            <div className="w-11 h-6 rounded-full peer peer-focus:ring-2 peer-focus:ring-[var(--accent-color)] after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all" style={{ backgroundColor: isGlassEffect ? 'var(--accent-color)' : 'var(--input-bg)' }}></div>
           </label>
         </div>
       </SettingsSection>
 
       <SettingsSection title="Notifications">
         <div className="flex items-center justify-between">
-          <span className="text-slate-600 dark:text-dark-text">Push Notifications</span>
+          <span style={{ color: 'var(--text-muted)' }}>Push Notifications</span>
           <label className="relative inline-flex items-center cursor-pointer">
             <input type="checkbox" checked={pushNotifications} onChange={() => setPushNotifications(!pushNotifications)} className="sr-only peer" />
-            <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-purple-300 dark:peer-focus:ring-purple-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+            <div className="w-11 h-6 rounded-full peer peer-focus:ring-2 peer-focus:ring-[var(--accent-color)] after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all" style={{ backgroundColor: pushNotifications ? 'var(--accent-color)' : 'var(--input-bg)' }}></div>
           </label>
         </div>
         <div>
-          <span className="text-slate-600 dark:text-dark-text">Notification Types</span>
+          <span style={{ color: 'var(--text-muted)' }}>Notification Types</span>
           <div className="flex flex-col gap-2 mt-2">
-            <label className="flex items-center gap-2 dark:text-dark-text">
+            <label className="flex items-center gap-2" style={{ color: 'var(--text-color)' }}>
               <input type="checkbox" name="reminders" checked={notificationTypes.reminders} onChange={handleNotificationTypeChange} />
               Reminders
             </label>
-            <label className="flex items-center gap-2 dark:text-dark-text">
+            <label className="flex items-center gap-2" style={{ color: 'var(--text-color)' }}>
               <input type="checkbox" name="deadlines" checked={notificationTypes.deadlines} onChange={handleNotificationTypeChange} />
               Deadlines
             </label>
-            <label className="flex items-center gap-2 dark:text-dark-text">
+            <label className="flex items-center gap-2" style={{ color: 'var(--text-color)' }}>
               <input type="checkbox" name="messages" checked={notificationTypes.messages} onChange={handleNotificationTypeChange} />
               Messages
             </label>
@@ -123,18 +152,21 @@ export default function SettingsPage() {
               placeholder="Feed Name"
               value={newFeedName}
               onChange={(e) => setNewFeedName(e.target.value)}
-              className="flex-1 px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-200 bg-white dark:bg-dark-card dark:text-dark-text"
+              className="flex-1 px-4 py-2 border rounded-xl focus:outline-none focus:ring-2"
+              style={{ backgroundColor: 'var(--card-bg)', color: 'var(--text-color)', borderColor: 'var(--border-color)' }}
             />
             <input
               type="url"
               placeholder="Feed URL (e.g., https://www.example.com/rss)"
               value={newFeedUrl}
               onChange={(e) => setNewFeedUrl(e.target.value)}
-              className="flex-1 px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-200 bg-white dark:bg-dark-card dark:text-dark-text"
+              className="flex-1 px-4 py-2 border rounded-xl focus:outline-none focus:ring-2"
+              style={{ backgroundColor: 'var(--card-bg)', color: 'var(--text-color)', borderColor: 'var(--border-color)' }}
             />
             <button
               onClick={handleAddFeed}
-              className="flex-shrink-0 bg-purple-500 text-white px-4 py-2 rounded-xl hover:bg-purple-600 transition-colors flex items-center justify-center gap-2"
+              className="flex-shrink-0 px-4 py-2 rounded-xl transition-colors flex items-center justify-center gap-2"
+              style={{ backgroundColor: 'var(--accent-color)', color: 'white' }}
             >
               <Plus size={18} /> Add Feed
             </button>
@@ -143,24 +175,27 @@ export default function SettingsPage() {
           {rssFeeds.length > 0 ? (
             <ul className="space-y-3 mt-4">
               {rssFeeds.map((feed) => (
-                <li key={feed.id} className="flex flex-col sm:flex-row items-center gap-3 p-3 bg-gray-50 dark:bg-dark-card rounded-xl border border-gray-100 dark:border-slate-700">
+                <li key={feed.id} className="flex flex-col sm:flex-row items-center gap-3 p-3 rounded-xl border" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}>
                   {editingFeedId === feed.id ? (
                     <>
                       <input
                         type="text"
                         value={editingFeedName}
                         onChange={(e) => setEditingFeedName(e.target.value)}
-                        className="flex-1 px-3 py-1 border rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-200 bg-white dark:bg-slate-700 dark:text-white"
+                        className="flex-1 px-3 py-1 border rounded-lg focus:outline-none focus:ring-1"
+                        style={{ backgroundColor: 'var(--input-bg)', color: 'var(--text-color)', borderColor: 'var(--border-color)' }}
                       />
                       <input
                         type="url"
                         value={editingFeedUrl}
                         onChange={(e) => setEditingFeedUrl(e.target.value)}
-                        className="flex-1 px-3 py-1 border rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-200 bg-white dark:bg-slate-700 dark:text-white"
+                        className="flex-1 px-3 py-1 border rounded-lg focus:outline-none focus:ring-1"
+                        style={{ backgroundColor: 'var(--input-bg)', color: 'var(--text-color)', borderColor: 'var(--border-color)' }}
                       />
                       <button
                         onClick={() => handleSaveEdit(feed.id)}
-                        className="flex-shrink-0 bg-green-500 text-white px-3 py-1 rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center gap-1"
+                        className="flex-shrink-0 px-3 py-1 rounded-lg transition-colors flex items-center justify-center gap-1"
+                        style={{ backgroundColor: '#22c55e', color: 'white' }}
                       >
                         <Save size={16} /> Save
                       </button>
@@ -168,23 +203,25 @@ export default function SettingsPage() {
                   ) : (
                     <>
                       <div className="flex-1">
-                        <p className="font-medium text-slate-700 dark:text-slate-200">{feed.name}</p>
-                        <p className="text-sm text-slate-500 dark:text-slate-400 truncate">{feed.url}</p>
+                        <p className="font-medium">{feed.name}</p>
+                        <p className="text-sm truncate" style={{ color: 'var(--text-muted)' }}>{feed.url}</p>
                       </div>
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleEditClick(feed)}
-                          className="p-2 rounded-lg hover:bg-blue-100 dark:hover:bg-slate-700 transition-colors"
+                          className="p-2 rounded-lg transition-colors"
+                          style={{ color: '#3b82f6' }}
                           title="Edit Feed"
                         >
-                          <Edit size={18} className="text-blue-500 dark:text-blue-400" />
+                          <Edit size={18} />
                         </button>
                         <button
                           onClick={() => handleDeleteClick(feed.id)}
-                          className="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-slate-700 transition-colors"
+                          className="p-2 rounded-lg transition-colors"
+                          style={{ color: '#ef4444' }}
                           title="Delete Feed"
                         >
-                          <Trash2 size={18} className="text-red-500 dark:text-red-400" />
+                          <Trash2 size={18} />
                         </button>
                       </div>
                     </>
@@ -193,31 +230,31 @@ export default function SettingsPage() {
               ))}
             </ul>
           ) : (
-            <p className="text-slate-500 dark:text-slate-400 text-center py-4">No RSS feeds added yet.</p>
+            <p className="text-center py-4" style={{ color: 'var(--text-muted)' }}>No RSS feeds added yet.</p>
           )}
         </div>
       </SettingsSection>
 
       <SettingsSection title="About">
         <div className="flex items-center justify-between">
-          <span className="text-slate-600 dark:text-dark-text">App Information</span>
-          <button className="text-purple-600 hover:underline">View</button>
+          <span style={{ color: 'var(--text-muted)' }}>App Information</span>
+          <button style={{ color: 'var(--accent-color)' }}>View</button>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-slate-600 dark:text-dark-text">Send Feedback</span>
-          <button className="text-purple-600 hover:underline">Send</button>
+          <span style={{ color: 'var(--text-muted)' }}>Send Feedback</span>
+          <button style={{ color: 'var(--accent-color)' }}>Send</button>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-slate-600 dark:text-dark-text">Support</span>
-          <button className="text-purple-600 hover:underline">Contact</button>
+          <span style={{ color: 'var(--text-muted)' }}>Support</span>
+          <button style={{ color: 'var(--accent-color)' }}>Contact</button>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-slate-600 dark:text-dark-text">Rate Us</span>
-          <button className="text-purple-600 hover:underline">Rate</button>
+          <span style={{ color: 'var(--text-muted)' }}>Rate Us</span>
+          <button style={{ color: 'var(--accent-color)' }}>Rate</button>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-slate-600 dark:text-dark-text">Languages</span>
-          <button className="text-purple-600 hover:underline">Change</button>
+          <span style={{ color: 'var(--text-muted)' }}>Languages</span>
+          <button style={{ color: 'var(--accent-color)' }}>Change</button>
         </div>
       </SettingsSection>
     </div>

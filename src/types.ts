@@ -59,6 +59,8 @@ export interface OutletContext {
   formatTotalStudyTime: (totalSeconds: number) => string;
   isDarkMode: boolean;
   setIsDarkMode: React.Dispatch<React.SetStateAction<boolean>>;
+  theme: string;
+  setTheme: React.Dispatch<React.SetStateAction<string>>;
   saveUploadedFile: (file: globalThis.File, folderId: string) => Promise<File | undefined>; // New prop for saving files
   deleteUploadedFile: (folderId: string, fileId: string) => Promise<void>; // New prop for deleting files
 }

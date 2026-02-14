@@ -25,7 +25,7 @@ export const CreateCourseModal: React.FC<CreateCourseModalProps> = ({ isOpen, on
   return (
     <div className="modal" style={{ display: isOpen ? 'flex' : 'none' }}>
       <div className="box modal-box" onClick={e => e.stopPropagation()}>
-        <h3 style={{color: 'var(--text-dashboard-800)', marginBottom: '16px'}}>Create New Course</h3>
+        <h3 style={{color: 'var(--text-color)', marginBottom: '16px'}}>Create New Course</h3>
         <input
           type="text"
           placeholder="Course Name"
@@ -40,22 +40,22 @@ export const CreateCourseModal: React.FC<CreateCourseModalProps> = ({ isOpen, on
             width: '100%',
             padding: '10px',
             borderRadius: '8px',
-            border: '1px solid var(--card-border-dashboard)',
+            border: '1px solid var(--border-color)',
             marginBottom: '10px',
-            color: 'var(--text-dashboard-800)',
-            background: 'transparent'
+            color: 'var(--text-color)',
+            background: 'var(--input-bg)'
           }}
         />
         <button
           onClick={handleConfirm}
           style={{
-            background: "linear-gradient(135deg, var(--accent-purple-primary) 0%, var(--accent-purple-secondary) 100%)",
-            color: "var(--text-light)"
+            background: "linear-gradient(135deg, var(--accent-color) 0%, var(--accent-dark) 100%)",
+            color: "white"
           }}
         >
           Create
         </button>
-        <button onClick={handleClose} style={{ background: "var(--grey)", color: "var(--text-dashboard-800)" }}>
+        <button onClick={handleClose} style={{ background: "var(--secondary)", color: "var(--text-color)" }}>
           Cancel
         </button>
       </div>

@@ -1,4 +1,6 @@
 import { Play, Pause, RotateCcw } from 'lucide-react';
+import { useOutletContext } from 'react-router-dom';
+import { OutletContext } from '../../types';
 
 interface TimerProps {
   timeStudied: number;
@@ -9,15 +11,28 @@ interface TimerProps {
 }
 
 export function Timer({ timeStudied, formatTime, isRunning, onToggleTimer, onResetTimer }: TimerProps) {
+  const { theme } = useOutletContext<OutletContext>();
+
+  const getThemeColor = () => {
+    switch(theme) {
+      case 'royal': return '#9d6dff';
+      case 'catpuccin': return '#89b4fa';
+      case 'frappe': return '#81c8be';
+      default: return '#f472b6';
+    }
+  };
+
+  const accentColor = getThemeColor();
+
   return (
     <div className="flex flex-col items-center gap-4">
       <div 
         className="text-5xl font-mono tracking-tight"
         style={{
-          background: 'linear-gradient(135deg, #6D5BFF 0%, #8B7AFF 100%)',
+          background: `linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%)`,
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
-          textShadow: '0 0 40px rgba(109, 91, 255, 0.3)',
+          textShadow: `0 0 40px ${accentColor}50`,
         }}
       >
         {formatTime(timeStudied)}
@@ -30,7 +45,7 @@ export function Timer({ timeStudied, formatTime, isRunning, onToggleTimer, onRes
           style={{
             background: isRunning 
               ? 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)'
-              : 'linear-gradient(135deg, #6D5BFF 0%, #8B7AFF 100%)',
+              : `linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%)`,
           }}
         >
           {isRunning ? (
@@ -44,10 +59,10 @@ export function Timer({ timeStudied, formatTime, isRunning, onToggleTimer, onRes
           onClick={onResetTimer}
           className="w-12 h-12 rounded-full flex items-center justify-center transition-all hover:shadow-lg active:scale-95"
           style={{
-            background: 'rgba(148, 163, 184, 0.2)',
+            background: 'var(--input-bg)',
           }}
         >
-          <RotateCcw className="w-5 h-5 text-slate-600" />
+          <RotateCcw className="w-5 h-5" style={{ color: 'var(--text-muted)' }} />
         </button>
       </div>
     </div>

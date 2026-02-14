@@ -42,7 +42,8 @@ export function CreateFolderModal({ isOpen, onClose, onConfirm, parentFolderId, 
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50"
+            className="fixed inset-0 backdrop-blur-sm z-50"
+            style={{ background: 'rgba(0, 0, 0, 0.4)' }}
           />
           
           {/* Modal */}
@@ -56,28 +57,29 @@ export function CreateFolderModal({ isOpen, onClose, onConfirm, parentFolderId, 
             <div
               className="mx-auto max-w-lg rounded-t-3xl p-6"
               style={{
-                background: 'rgba(255, 255, 255, 0.95)',
+                background: 'var(--card-bg)',
                 backdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255, 255, 255, 0.5)',
+                border: '1px solid var(--border-color)',
                 boxShadow: '0 -8px 32px rgba(0, 0, 0, 0.1)',
               }}
             >
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-semibold text-slate-900">
+                <h3 className="text-xl font-semibold" style={{ color: 'var(--text-color)' }}>
                   {currentParentFolderName ? `Create subfolder in "${currentParentFolderName}"` : 'Create Folder'}
                 </h3>
                 <button
                   onClick={onClose}
-                  className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                  className="p-2 rounded-lg transition-colors"
+                  style={{ color: 'var(--text-muted)' }}
                 >
-                  <X className="w-5 h-5 text-slate-400" />
+                  <X className="w-5 h-5" />
                 </button>
               </div>
 
               <div className="space-y-5">
                 {/* Folder Name Input */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-color)' }}>
                     Folder Name
                   </label>
                   <input
@@ -85,14 +87,20 @@ export function CreateFolderModal({ isOpen, onClose, onConfirm, parentFolderId, 
                     value={folderName}
                     onChange={(e) => setFolderName(e.target.value)}
                     placeholder="e.g., Computer Science"
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500 text-slate-900"
+                    className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2"
+                    style={{
+                      borderColor: 'var(--border-color)',
+                      background: 'var(--input-bg)',
+                      color: 'var(--text-color)',
+                      '--tw-ring-color': 'var(--accent-color)',
+                    } as React.CSSProperties}
                     autoFocus
                   />
                 </div>
 
                 {/* Color Selection */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-3">
+                  <label className="block text-sm font-medium mb-3" style={{ color: 'var(--text-color)' }}>
                     Choose Color
                   </label>
                   <div className="grid grid-cols-6 gap-3">
@@ -103,8 +111,8 @@ export function CreateFolderModal({ isOpen, onClose, onConfirm, parentFolderId, 
                         className="relative w-12 h-12 rounded-xl transition-all active:scale-95"
                         style={{
                           background: color.gradient,
-                          border: selectedColor === color.gradient ? '3px solid #6D5BFF' : '3px solid transparent',
-                          boxShadow: selectedColor === color.gradient ? '0 4px 12px rgba(109, 91, 255, 0.3)' : 'none',
+                          border: selectedColor === color.gradient ? '3px solid var(--accent-color)' : '3px solid transparent',
+                          boxShadow: selectedColor === color.gradient ? '0 4px 12px var(--accent-color)' : 'none',
                         }}
                       >
                         {selectedColor === color.gradient && (
@@ -121,16 +129,22 @@ export function CreateFolderModal({ isOpen, onClose, onConfirm, parentFolderId, 
                 <div className="flex gap-3 pt-2">
                   <button
                     onClick={onClose}
-                    className="flex-1 px-4 py-3 rounded-xl border border-slate-300 text-slate-700 font-medium hover:bg-slate-50 transition-colors"
+                    className="flex-1 px-4 py-3 rounded-xl border font-medium transition-colors"
+                    style={{
+                      borderColor: 'var(--border-color)',
+                      color: 'var(--text-color)',
+                      background: 'transparent',
+                    }}
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSubmit}
                     disabled={!folderName.trim()}
-                    className="flex-1 px-4 py-3 rounded-xl text-white font-medium transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+                    className="flex-1 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
                     style={{
-                      background: 'linear-gradient(135deg, #6D5BFF 0%, #8B7AFF 100%)',
+                      background: 'linear-gradient(135deg, var(--accent-color) 0%, var(--accent-dark) 100%)',
+                      color: 'white',
                     }}
                   >
                     Create Folder

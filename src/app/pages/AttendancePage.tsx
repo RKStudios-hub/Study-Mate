@@ -21,7 +21,19 @@ interface Store {
 }
 
 const AttendancePage: React.FC = () => {
-  const { isDarkMode } = useOutletContext();
+  const { theme } = useOutletContext();
+  
+  const getAccentColor = () => {
+    switch(theme) {
+      case 'royal': return '#9d6dff';
+      case 'catpuccin': return '#89b4fa';
+      case 'frappe': return '#81c8be';
+      default: return '#f472b6';
+    }
+  };
+  
+  const accentColor = getAccentColor();
+  
   const [store, setStore] = useState<Store>(() => {
     const saved = localStorage.getItem("attendance");
     return saved ? JSON.parse(saved) : {};
@@ -43,18 +55,6 @@ const AttendancePage: React.FC = () => {
   useEffect(() => {
     localStorage.setItem("attendance", JSON.stringify(store));
   }, [store]);
-
-  useEffect(() => {
-    if (isDarkMode) {
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = './AttendancePage.dark.css';
-      document.head.appendChild(link);
-      return () => {
-        document.head.removeChild(link);
-      };
-    }
-  }, [isDarkMode]);
 
   const keyToDate = (k: string): Date => {
     const [y, m, d] = k.split("-").map(Number);
@@ -288,11 +288,11 @@ const AttendancePage: React.FC = () => {
 
 
   return (
-    <div className="app bg-white dark:bg-dark-background">
+    <div className="app">
       {/* MAIN SCREEN (Course List) */}
       <div id="main" style={{ display: currentCourse ? "none" : "block" }}>
-        <h2 className="header text-slate-800 dark:text-dark-text" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative'}}>
-          <Link to="/" className="attendance-back-button text-slate-800 dark:text-dark-text" style={{position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)'}}>
+        <h2 className="header" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', color: 'var(--text-color)'}}>
+          <Link to="/" className="attendance-back-button" style={{position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-color)'}}>
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <span>Attendance</span>
@@ -301,30 +301,29 @@ const AttendancePage: React.FC = () => {
           {renderCourseList()}
         </div>
         <div id="empty" className="empty text-center py-12" style={{ display: Object.keys(store).length ? "none" : "block" }}>
-          <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-slate-100 dark:bg-dark-card flex items-center justify-center">
-            <Search className="w-10 h-10 text-slate-400 dark:text-slate-500" />
+          <div className="w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--input-bg)' }}>
+            <Search className="w-10 h-10" style={{ color: 'var(--text-muted)' }} />
           </div>
-          <p className="text-slate-600 dark:text-slate-400 mb-2">No courses found</p>
-          <p className="text-sm text-slate-500 dark:text-slate-500">Create a course to mark attendance</p>
+          <p className="mb-2" style={{ color: 'var(--text-muted)' }}>No courses found</p>
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Create a course to mark attendance</p>
         </div>
-        <button className="add-btn bg-purple-600 dark:bg-dark-primary" onClick={addCourse}>＋ Add Course</button>
+        <button className="add-btn" style={{ backgroundColor: accentColor }} onClick={addCourse}>＋ Add Course</button>
       </div>
 
       {/* ATTENDANCE SCREEN */}
       <div id="att" style={{ display: currentCourse ? "block" : "none" }}>
-        <div className="top header text-slate-800 dark:text-dark-text"> {/* top div now acts as header */}
-          {/* Back button */}
-          <Link className="attendance-back-button text-slate-800 dark:text-dark-text" onClick={goBack}>
+        <div className="top header" style={{ color: 'var(--text-color)' }}>
+          <Link className="attendance-back-button" onClick={goBack} style={{ color: 'var(--text-color)' }}>
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <h3 style={{flexGrow: 1, textAlign: "center", margin: 0}}>{currentCourse}</h3> {/* Centered title */}
+          <h3 style={{flexGrow: 1, textAlign: "center", margin: 0}}>{currentCourse}</h3>
         </div>
-        <div className="card summary bg-white dark:bg-dark-card" id="summary">
+        <div className="card summary" id="summary" style={{ backgroundColor: 'var(--card-bg)', border: '1px solid var(--border-color)' }}>
           {summaryHTML}
         </div>
 
         {/* Target and Progress Bar */}
-        <div className="card bg-white dark:bg-dark-card">
+        <div className="card" style={{ backgroundColor: 'var(--card-bg)', border: '1px solid var(--border-color)' }}>
           Target: <span id="targetVal">{currentCourse ? store[currentCourse].target : ''}</span>%
           <input
             type="range"
@@ -346,8 +345,8 @@ const AttendancePage: React.FC = () => {
         </div>
 
         {/* Calendar */}
-        <div className="card calendar bg-white dark:bg-dark-card">
-          <div className="month text-slate-800 dark:text-dark-text">
+        <div className="card calendar" style={{ backgroundColor: 'var(--card-bg)', border: '1px solid var(--border-color)' }}>
+          <div className="month" style={{ color: 'var(--text-color)' }}>
             <span onClick={() => changeMonth(-1)}>◀</span>
             <span id="monthYear">{currentDate.toLocaleString("default", { month: "long", year: "numeric" })}</span>
             <span onClick={() => changeMonth(1)}>▶</span>
@@ -360,11 +359,11 @@ const AttendancePage: React.FC = () => {
 
       {/* DAY MODAL */}
       <div className="modal" id="dayModal" ref={dayModalRef} style={{ display: selectedKey ? "flex" : "none" }} onClick={closeDayModal}>
-        <div className="box bg-white dark:bg-dark-card" onClick={e => e.stopPropagation()}> {/* Prevent modal closing when clicking inside box */}
-          <button style={{ background: "var(--green)", color: "white" }} onClick={() => mark('present')}>Present</button>
-          <button style={{ background: "var(--red)", color: "white" }} onClick={() => mark('absent')}>Absent</button>
-          <button style={{ background: "var(--orange)", color: "white" }} onClick={() => mark('half')}>Half Day</button>
-          <button className="text-slate-800 dark:text-dark-text" onClick={() => mark(null)}>Clear</button>
+        <div className="box" style={{ backgroundColor: 'var(--card-bg)' }} onClick={e => e.stopPropagation()}>
+          <button style={{ background: "#22c55e", color: "white" }} onClick={() => mark('present')}>Present</button>
+          <button style={{ background: "#ef4444", color: "white" }} onClick={() => mark('absent')}>Absent</button>
+          <button style={{ background: "#f59e0b", color: "white" }} onClick={() => mark('half')}>Half Day</button>
+          <button style={{ color: 'var(--text-color)' }} onClick={() => mark(null)}>Clear</button>
         </div>
       </div>
 

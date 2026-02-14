@@ -3,7 +3,8 @@
 @import './theme.css';
 
 body {
-  @apply bg-white dark:bg-black;
+  margin: 0;
+  padding: 0;
 }
 
 #outline {

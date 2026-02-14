@@ -5,12 +5,12 @@ import { ArrowLeft } from 'lucide-react';
 import { DeleteModal } from '../components/DeleteModal';
 import './TimeTablePage.css';
 
-interface Task {
+interface task {
   id: string;
   title: string;
   day: string;
-  s: number; // start minute
-  e: number; // end minute
+  s: number;
+  e: number;
   color: string;
 }
 
@@ -24,14 +24,14 @@ const daysOfWeek = [
 const colors = ["#a855f7", "#ec4899", "#6366f1", "#22c55e", "#06b6d4", "#f97316"];
 
 const TimeTablePage: React.FC = () => {
-  const { isDarkMode } = useOutletContext<OutletContext>();
-  const [tasks, setTasks] = useState<Task[]>(() => {
+  const { theme } = useOutletContext<OutletContext>();
+  const [tasks, setTasks] = useState<task[]>(() => {
     const saved = localStorage.getItem("weeklyTasks");
     return saved ? JSON.parse(saved) : [];
   });
   const [selectedColor, setSelectedColor] = useState(colors[0]);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
+  const [taskToDelete, setTaskToDelete] = useState<task | null>(null);
 
   const titleRef = useRef<HTMLInputElement>(null);
   const dayRef = useRef<HTMLSelectElement>(null);
@@ -42,17 +42,16 @@ const TimeTablePage: React.FC = () => {
     localStorage.setItem("weeklyTasks", JSON.stringify(tasks));
   }, [tasks]);
 
-  useEffect(() => {
-    if (isDarkMode) {
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = './TimeTablePage.dark.css';
-      document.head.appendChild(link);
-      return () => {
-        document.head.removeChild(link);
-      };
+  const getAccentColor = () => {
+    switch(theme) {
+      case 'royal': return '#9d6dff';
+      case 'catpuccin': return '#89b4fa';
+      case 'frappe': return '#81c8be';
+      default: return '#f472b6';
     }
-  }, [isDarkMode]);
+  };
+
+  const accentColor = getAccentColor();
 
   const toMin = (t: string) => {
     const [h, m] = t.split(":").map(Number);
@@ -61,7 +60,7 @@ const TimeTablePage: React.FC = () => {
 
   const addTask = () => {
     if (titleRef.current?.value && startRef.current?.value && endRef.current?.value) {
-      const newTask: Task = {
+      const newTask: task = {
         id: crypto.randomUUID(),
         title: titleRef.current.value,
         day: dayRef.current?.value || "Monday",
@@ -74,24 +73,42 @@ const TimeTablePage: React.FC = () => {
     }
   };
 
-  return (
-    <div className="time-table-container bg-white dark:bg-dark-background">
-      <Link to="/" className="back-btn text-slate-800 dark:text-dark-text"><ArrowLeft size={20} /></Link>
-      <h1 className="text-slate-800 dark:text-dark-text">Time Table</h1>
+  const inputStyle = {
+    backgroundColor: 'var(--input-bg)',
+    color: 'var(--text-color)',
+    border: '1px solid var(--border-color)',
+    borderRadius: '0.5rem',
+    padding: '0.5rem',
+    width: '100%' as const,
+  };
 
-      <div className="card form-card bg-white dark:bg-dark-card">
-        <label className="text-slate-700 dark:text-dark-text">Task Title</label>
-        <input ref={titleRef} placeholder="e.g. Math Study" className="bg-slate-100 dark:bg-dark-background dark:text-dark-text" />
+  const labelStyle = {
+    color: 'var(--text-color)',
+    display: 'block' as const,
+    marginBottom: '0.25rem',
+    fontSize: '0.875rem' as const,
+  };
+
+  return (
+    <div className="time-table-container">
+      <Link to="/" className="back-btn" style={{ color: 'var(--text-color)' }}>
+        <ArrowLeft size={20} />
+      </Link>
+      <h1 style={{ color: 'var(--text-color)' }}>Time Table</h1>
+
+      <div className="card form-card" style={{ backgroundColor: 'var(--card-bg)', border: '1px solid var(--border-color)' }}>
+        <label style={labelStyle}>Task Title</label>
+        <input ref={titleRef} placeholder="e.g. Math Study" style={inputStyle} />
         
         <div className="form-row">
           <div>
-            <label className="text-slate-700 dark:text-dark-text">Day</label>
-            <select ref={dayRef} className="bg-slate-100 dark:bg-dark-background dark:text-dark-text">
+            <label style={labelStyle}>Day</label>
+            <select ref={dayRef} style={inputStyle}>
               {daysOfWeek.map(d => <option key={d.f} value={d.f}>{d.f}</option>)}
             </select>
           </div>
           <div className="palette-container">
-            <label className="text-slate-700 dark:text-dark-text">Color</label>
+            <label style={labelStyle}>Color</label>
             <div className="palette">
               {colors.map(c => (
                 <div key={c} className={`dot ${selectedColor === c ? 'active' : ''}`}
@@ -102,19 +119,19 @@ const TimeTablePage: React.FC = () => {
         </div>
 
         <div className="form-row">
-          <input type="time" ref={startRef} className="bg-slate-100 dark:bg-dark-background dark:text-dark-text" />
-          <input type="time" ref={endRef} className="bg-slate-100 dark:bg-dark-background dark:text-dark-text" />
+          <input type="time" ref={startRef} style={inputStyle} />
+          <input type="time" ref={endRef} style={inputStyle} />
         </div>
-        <button className="add-btn bg-purple-600 dark:bg-dark-primary" onClick={addTask}>Add Task</button>
+        <button className="add-btn" style={{ backgroundColor: accentColor }} onClick={addTask}>Add Task</button>
       </div>
 
-      <div className="calendar-card bg-white dark:bg-dark-card">
+      <div className="calendar-card" style={{ backgroundColor: 'var(--card-bg)', border: '1px solid var(--border-color)' }}>
         <div className="scroll-viewport">
           <div className="calendar-grid">
             <div className="time-col">
               <div className="spacer" />
               {Array.from({ length: 25 }).map((_, h) => (
-                <div key={h} className="t-slot text-slate-500 dark:text-slate-400">{h}:00</div>
+                <div key={h} className="t-slot" style={{ color: 'var(--text-muted)' }}>{h}:00</div>
               ))}
             </div>
 
@@ -122,10 +139,9 @@ const TimeTablePage: React.FC = () => {
               const dayTasks = tasks.filter(t => t.day === day.f).sort((a, b) => a.s - b.s);
               return (
                 <div key={day.f} className="day-col">
-                  <div className="day-head text-slate-700 dark:text-dark-text">{day.s}</div>
+                  <div className="day-head" style={{ color: 'var(--text-color)' }}>{day.s}</div>
                   <div className="day-body">
                     {dayTasks.map(t => {
-                      // Calculate overlaps for side-by-side positioning
                       const overlaps = dayTasks.filter(ot => ot.id !== t.id && ot.s < t.e && ot.e > t.s);
                       const widthPct = 100 / (overlaps.length + 1);
                       const offsetIdx = overlaps.filter(ot => ot.s < t.s || (ot.s === t.s && ot.id < t.id)).length;
@@ -161,6 +177,5 @@ const TimeTablePage: React.FC = () => {
     </div>
   );
 };
-
 
 export default TimeTablePage;

@@ -12,7 +12,6 @@ import { useOutletContext } from 'react-router-dom';
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 export default function Dashboard() {
-  // Use context from Layout.tsx
   const {
     folders,
     setFolders,
@@ -26,9 +25,22 @@ export default function Dashboard() {
     onResetTimer,
     setSidebarOpen,
     openFileViewer,
-    saveUploadedFile,      // New from OutletContext
-    deleteUploadedFile,    // New from OutletContext
+    saveUploadedFile,
+    deleteUploadedFile,
+    isDarkMode,
+    theme,
   } = useOutletContext<OutletContext>();
+
+  const getAccentColor = () => {
+    switch(theme) {
+      case 'royal': return '#9d6dff';
+      case 'catpuccin': return '#89b4fa';
+      case 'frappe': return '#81c8be';
+      default: return '#f472b6';
+    }
+  };
+
+  const accentColor = getAccentColor();
 
   const [createFolderOpen, setCreateFolderOpen] = useState(false);
   const [currentParentFolderId, setCurrentParentFolderId] = useState<string | undefined>(undefined);
@@ -308,42 +320,48 @@ export default function Dashboard() {
   }, [openFileViewer]);
 
   return (
-    <div className="min-h-screen relative overflow-hidden pb-20 bg-white dark:bg-dark-background">
-      <div
-        className="fixed inset-0 -z-10 dark:hidden"
-        style={{
-          background: 'linear-gradient(135deg, #F3E7FF 0%, #E8F5E9 50%, #E0F2F7 100%)',
-        }}
-      />
-
+    <div className="min-h-screen relative overflow-hidden pb-20">
       <div className="min-h-screen">
-        <header className="px-4 py-4 flex items-center gap-3 sticky top-0 z-20 bg-white/80 dark:bg-dark-background/80 backdrop-blur-2xl border-b border-white/50 dark:border-card/50"
+        <header className="px-4 py-4 flex items-center gap-3 sticky top-0 z-20"
+          style={{
+            background: 'var(--card-bg)',
+            backdropFilter: 'blur(20px)',
+            borderBottom: '1px solid var(--border-color)',
+          }}
         >
           <button
             onClick={() => setSidebarOpen(true)}
-            className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-purple-500/10 dark:bg-dark-primary/10"
+            className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors"
+            style={{ background: `${accentColor}15` }}
           >
-            <Menu className="w-5 h-5 text-purple-600 dark:text-dark-primary" />
+            <Menu className="w-5 h-5" style={{ color: accentColor }} />
           </button>
           
-          <div
-            className="flex-1 px-4 py-2.5 rounded-2xl flex items-center gap-2 bg-white/60 dark:bg-dark-card/60 backdrop-blur-2xl border border-white/70 dark:border-dark-card/70"
+          <div className="flex-1 px-4 py-2.5 rounded-2xl flex items-center gap-2"
+            style={{
+              background: 'var(--input-bg)',
+              border: '1px solid var(--border-color)',
+            }}
           >
-            <Search className="w-4 h-4 text-slate-400 dark:text-slate-500 flex-shrink-0" />
+            <Search className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--text-muted)' }} />
             <input
               type="text"
               placeholder="Search files..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-1 bg-transparent border-none outline-none text-slate-700 dark:text-dark-text placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm min-w-0"
+              className="flex-1 bg-transparent border-none outline-none text-sm min-w-0"
+              style={{ color: 'var(--text-color)' }}
             />
           </div>
           
-          <button
-            className="w-10 h-10 rounded-xl flex items-center justify-center relative flex-shrink-0 bg-white/60 dark:bg-dark-card/60 backdrop-blur-2xl border border-white/70 dark:border-dark-card/70"
+          <button className="w-10 h-10 rounded-xl flex items-center justify-center relative flex-shrink-0"
+            style={{
+              background: 'var(--card-bg)',
+              border: '1px solid var(--border-color)',
+            }}
           >
-            <Bell className="w-4 h-4 text-slate-600 dark:text-slate-400" />
-            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full" />
+            <Bell className="w-4 h-4" style={{ color: 'var(--text-color)', opacity: 0.7 }} />
+            <span className="absolute top-2 right-2 w-2 h-2 rounded-full" style={{ background: 'var(--destructive)' }} />
           </button>
         </header>
 
@@ -359,14 +377,22 @@ export default function Dashboard() {
                 setCurrentParentFolderId(undefined);
                 setCurrentParentFolderName(undefined);
               }}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-white font-medium transition-all hover:shadow-lg active:scale-95 bg-purple-600 hover:bg-purple-700 dark:bg-dark-primary dark:hover:bg-purple-500"
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-lg active:scale-95"
+              style={{
+                background: `linear-gradient(135deg, ${accentColor} 0%, ${accentColor}cc 100%)`,
+                color: 'white',
+              }}
             >
               <FolderPlus className="w-5 h-5" />
               <span>New Folder</span>
             </button>
             <button
               onClick={() => setFileUploadOpen(true)}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-white font-medium transition-all hover:shadow-lg active:scale-95 bg-purple-500 hover:bg-purple-600 dark:bg-dark-primary/80 dark:hover:bg-dark-primary"
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-lg active:scale-95"
+              style={{
+                background: `linear-gradient(135deg, ${accentColor}cc 0%, ${accentColor}99 100%)`,
+                color: 'white',
+              }}
             >
               <Upload className="w-5 h-5" />
               <span>Upload</span>
@@ -374,11 +400,13 @@ export default function Dashboard() {
           </div>
 
           <div className="mb-4">
-            <h2 className="text-xl font-semibold text-slate-800 dark:text-dark-text">
+            <h2 className="text-xl font-semibold"
+              style={{ color: 'var(--text-color)' }}
+            >
               {searchTerm ? 'Search Results' : 'My Folders'}
             </h2>
             {searchTerm && (
-              <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+              <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
                 {filteredFolders.length} folder(s) found
               </p>
             )}
@@ -412,11 +440,11 @@ export default function Dashboard() {
             
             {filteredFolders.length === 0 && (
               <div className="text-center py-12">
-                <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-slate-100 dark:bg-dark-card flex items-center justify-center">
-                  <Search className="w-10 h-10 text-slate-400 dark:text-slate-500" />
+                <div className="w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ background: 'var(--secondary)' }}>
+                  <Search className="w-10 h-10" style={{ color: 'var(--text-muted)' }} />
                 </div>
-                <p className="text-slate-600 dark:text-slate-400 mb-2">No results found</p>
-                <p className="text-sm text-slate-500 dark:text-slate-500">Try a different search term</p>
+                <p className="mb-2" style={{ color: 'var(--text-color)' }}>No results found</p>
+                <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Try a different search term</p>
               </div>
             )}
           </div>
