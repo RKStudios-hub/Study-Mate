@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "dev:proxy": "npm start --prefix ../rss-proxy",
-    "dev": "concurrently \"vite\" \"npm run dev:proxy\""
+    "dev": "vite"
   },
   "dependencies": {
     "@capacitor/filesystem": "^8.1.0",

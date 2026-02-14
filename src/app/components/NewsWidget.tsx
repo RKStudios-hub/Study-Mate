@@ -16,7 +16,7 @@ export function NewsWidget() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const CORS_PROXY_URL = 'http://localhost:3001/fetch-rss?url=';
+  const CORS_PROXY_URL = 'https://api.allorigins.win/raw?url=';
 
   const fetchRssFeeds = async () => {
     setLoading(true);

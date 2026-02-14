@@ -84,16 +84,14 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             {/* Profile Section */}
             <div className="p-4 border-t border-white/20">
               <div className="flex items-center gap-3 px-3 py-2">
-                <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/30">
-                  <img
-                    src="https://images.unsplash.com/photo-1678286742832-26543bb49959?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHx1c2VyJTIwcHJvZmlsZSUyMHBvcnRyYWl0fGVufDF8fHx8MTc2Nzk5NDQ3Nnww&ixlib=rb-4.1.0&q=80&w=1080"
-                    alt="User Avatar"
-                    className="w-full h-full object-cover"
-                  />
+                <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/30 bg-gray-600">
+                  <div className="w-full h-full flex items-center justify-center text-white text-sm">
+                    ?
+                  </div>
                 </div>
                 <div className="flex-1">
-                  <p className="text-white text-sm font-medium">User_010Butterfly</p>
-                  <p className="text-white/60 text-xs">Free Plan</p>
+                  <p className="text-white text-sm font-medium">Guest User</p>
+                  <p className="text-white/60 text-xs">Sign in to save progress</p>
                 </div>
               </div>
             </div>
