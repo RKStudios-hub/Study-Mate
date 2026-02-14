@@ -1,6 +1,84 @@
 @import './fonts.css';
 @import './tailwind.css';
 
+@property --bg-color {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #fdf2f8;
+}
+
+@property --card-bg {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #ffffff;
+}
+
+@property --text-color {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #1f2937;
+}
+
+@property --text-muted {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #6b7280;
+}
+
+@property --accent-color {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #f472b6;
+}
+
+@property --accent-dark {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #ec4899;
+}
+
+@property --accent-light {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #fce7f3;
+}
+
+@property --secondary-color {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #a78bfa;
+}
+
+@property --secondary-light {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #ddd6fe;
+}
+
+@property --input-bg {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #f3f4f6;
+}
+
+@property --border-color {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: rgba(0, 0, 0, 0.1);
+}
+
+@property --gradient-start {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #fce7f3;
+}
+
+@property --gradient-end {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #e0e7ff;
+}
+
 :root {
   --bg-color: #fdf2f8;
   --card-bg: #ffffff;
@@ -41,6 +119,20 @@
   --radius: 0.75rem;
   --gradient-start: #fce7f3;
   --gradient-end: #e0e7ff;
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --modal-bg: rgba(253, 242, 248, 0.6);
+}
+
+:root,
+*,
+*::before,
+*::after {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+html {
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 [data-theme="royal"] {
@@ -77,6 +169,9 @@
   --grey: #6b7280;
   --gradient-start: #0d0d1a;
   --gradient-end: #16162a;
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --modal-bg: rgba(0, 0, 0, 0.5);
 }
 
 [data-theme="catpuccin"] {
@@ -113,6 +208,9 @@
   --grey: #6c7086;
   --gradient-start: #1e1e2e;
   --gradient-end: #313244;
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --modal-bg: rgba(0, 0, 0, 0.5);
 }
 
 [data-theme="frappe"] {
@@ -149,10 +247,21 @@
   --grey: #626880;
   --gradient-start: #303336;
   --gradient-end: #383c42;
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --modal-bg: rgba(0, 0, 0, 0.5);
 }
 
 * {
   border-color: var(--border-color);
+}
+
+*,
+*::before,
+*::after {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-duration: 0.4s;
+  transition-timing-function: ease;
 }
 
 body {
@@ -160,7 +269,7 @@ body {
   background-attachment: fixed;
   color: var(--text-color);
   min-height: 100vh;
-  transition: background 0.3s ease;
+  transition: background 0.4s ease, color 0.4s ease;
 }
 
 @layer base {
@@ -194,16 +303,9 @@ body {
 }
 
 .glass {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--glass-bg);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-[data-theme="royal"] .glass,
-[data-theme="catpuccin"] .glass,
-[data-theme="frappe"] .glass {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border);
 }
 
 .card {
@@ -269,14 +371,8 @@ body {
 }
 
 .modal {
-  background: rgba(253, 242, 248, 0.6);
+  background: var(--modal-bg);
   backdrop-filter: blur(12px);
-}
-
-[data-theme="royal"] .modal,
-[data-theme="catpuccin"] .modal,
-[data-theme="frappe"] .modal {
-  background: rgba(0, 0, 0, 0.5);
 }
 
 .modal-content {
@@ -320,4 +416,19 @@ body {
   color: white;
   border-radius: var(--border-radius-item);
   box-shadow: 0 4px 12px var(--accent-color);
+}
+
+.dropdown-smooth {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+[data-state="open"].dropdown-smooth {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+[data-state="closed"].dropdown-smooth {
+  opacity: 0;
+  transform: scale(0.96) translateY(-8px);
+  pointer-events: none;
 }
