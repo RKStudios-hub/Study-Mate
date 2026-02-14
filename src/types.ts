@@ -3,7 +3,7 @@
 export interface PersistentFileMetadata {
   id: string;
   name: string;
-  persistentPath: string; // The path where the file is stored in Capacitor Filesystem
+  persistentPath: string; // The ID used to retrieve the file from storage
   type?: string; // Storing the file extension or inferred type (e.g., 'pdf', 'png')
   size?: string; // Formatted size
   date?: string; // Formatted date
