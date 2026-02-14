@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { OutletContext, RssFeed } from '../../types';
-import { Plus, Edit, Trash2, Save, Moon, Sun, Sparkles } from 'lucide-react';
+import { Plus, Edit, Trash2, Save } from 'lucide-react';
 import SettingsSection from '../components/SettingsSection';
 
 const themes = [
-  { id: 'kawaii', name: 'Kawaii', icon: '🌸', color: '#f472b6' },
-  { id: 'royal', name: 'Royal', icon: '👑', color: '#9d6dff' },
-  { id: 'catpuccin', name: 'Catpuccin', icon: '🐱', color: '#89b4fa' },
-  { id: 'frappe', name: 'Frappe', icon: '🍵', color: '#81c8be' },
+  { id: 'kawaii', name: 'Kawaii', icon: 'fa-solid fa-spa', color: '#f472b6' },
+  { id: 'royal', name: 'Royal Dark', icon: 'fa-solid fa-crown', color: '#9d6dff' },
+  { id: 'catpuccin', name: 'Catpuccin Mocha', icon: 'fa-solid fa-cat', color: '#89b4fa' },
+  { id: 'frappe', name: 'Catpuccin Frappe', icon: 'fa-solid fa-mug-hot', color: '#81c8be' },
 ];
 
 export default function SettingsPage() {
-  const { rssFeeds, addRssFeed, updateRssFeed, deleteRssFeed, isDarkMode, setIsDarkMode, theme, setTheme } = useOutletContext<OutletContext>();
+  const { rssFeeds, addRssFeed, updateRssFeed, deleteRssFeed, theme, setTheme } = useOutletContext<OutletContext>();
   const [newFeedName, setNewFeedName] = useState('');
   const [newFeedUrl, setNewFeedUrl] = useState('');
   const [editingFeedId, setEditingFeedId] = useState<string | null>(null);
@@ -70,34 +70,28 @@ export default function SettingsPage() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-3" style={{ color: 'var(--text-muted)' }}>Theme</label>
-            <div className="grid grid-cols-2 gap-3">
-              {themes.map((t) => (
-                <button
-                  key={t.id}
-                  onClick={() => setTheme(t.id)}
-                  className={`p-3 rounded-xl border-2 transition-all flex items-center gap-3 ${
-                    theme === t.id 
-                      ? 'border-[var(--accent-color)] bg-[var(--accent-light)]/20' 
-                      : 'border-[var(--border-color)] hover:border-[var(--accent-color)]/50'
-                  }`}
-                  style={{ 
-                    backgroundColor: theme === t.id ? `${t.color}20` : 'var(--input-bg)',
-                    borderColor: theme === t.color ? '' : ''
-                  }}
-                >
-                  <span className="text-2xl">{t.icon}</span>
-                  <span className="font-medium" style={{ color: 'var(--text-color)' }}>{t.name}</span>
-                </button>
-              ))}
+            <div className="relative">
+              <select
+                value={theme}
+                onChange={(e) => setTheme(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border appearance-none cursor-pointer focus:outline-none focus:ring-2"
+                style={{ 
+                  backgroundColor: 'var(--input-bg)', 
+                  color: 'var(--text-color)', 
+                  borderColor: 'var(--border-color)',
+                  '--tw-ring-color': 'var(--accent-color)',
+                } as React.CSSProperties}
+              >
+                {themes.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.name}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none" style={{ color: 'var(--text-muted)' }}>
+                <i className={`${themes.find(t => t.id === theme)?.icon} text-lg`} style={{ color: themes.find(t => t.id === theme)?.color }}></i>
+              </div>
             </div>
-          </div>
-          
-          <div className="flex items-center justify-between pt-2">
-            <span style={{ color: 'var(--text-muted)' }}>Dark Mode</span>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" checked={isDarkMode} onChange={() => setIsDarkMode(!isDarkMode)} className="sr-only peer" />
-              <div className="w-11 h-6 bg-[var(--input-bg)] rounded-full peer peer-focus:ring-2 peer-focus:ring-[var(--accent-color)] peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all" style={{ backgroundColor: isDarkMode ? 'var(--accent-color)' : 'var(--input-bg)' }}></div>
-            </label>
           </div>
         </div>
         <div className="flex items-center justify-between">

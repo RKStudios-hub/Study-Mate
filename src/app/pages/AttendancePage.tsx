@@ -252,11 +252,11 @@ const AttendancePage: React.FC = () => {
 
     const summaryHTML = (
       <>
-        <div><span>Present</span><span>{p}</span></div>
-        <div><span>Absent</span><span>{a}</span></div>
-        <div><span>Half Day</span><span>{h}</span></div>
-        <div><span>Unmarked</span><span>{u}</span></div>
-        <div><strong>Percentage</strong><strong>{percent.toFixed(2)}%</strong></div>
+        <div><span style={{color: 'var(--text-color)'}}>Present</span><span style={{color: 'var(--text-color)'}}>{p}</span></div>
+        <div><span style={{color: 'var(--text-color)'}}>Absent</span><span style={{color: 'var(--text-color)'}}>{a}</span></div>
+        <div><span style={{color: 'var(--text-color)'}}>Half Day</span><span style={{color: 'var(--text-color)'}}>{h}</span></div>
+        <div><span style={{color: 'var(--text-color)'}}>Unmarked</span><span style={{color: 'var(--text-color)'}}>{u}</span></div>
+        <div><strong style={{color: 'var(--text-color)'}}>Percentage</strong><strong style={{color: 'var(--text-color)'}}>{percent.toFixed(2)}%</strong></div>
       </>
     );
 
@@ -360,9 +360,9 @@ const AttendancePage: React.FC = () => {
       {/* DAY MODAL */}
       <div className="modal" id="dayModal" ref={dayModalRef} style={{ display: selectedKey ? "flex" : "none" }} onClick={closeDayModal}>
         <div className="box" style={{ backgroundColor: 'var(--card-bg)' }} onClick={e => e.stopPropagation()}>
-          <button style={{ background: "#22c55e", color: "white" }} onClick={() => mark('present')}>Present</button>
-          <button style={{ background: "#ef4444", color: "white" }} onClick={() => mark('absent')}>Absent</button>
-          <button style={{ background: "#f59e0b", color: "white" }} onClick={() => mark('half')}>Half Day</button>
+          <button style={{ background: "var(--green)", color: "white" }} onClick={() => mark('present')}>Present</button>
+          <button style={{ background: "var(--red)", color: "white" }} onClick={() => mark('absent')}>Absent</button>
+          <button style={{ background: "var(--orange)", color: "white" }} onClick={() => mark('half')}>Half Day</button>
           <button style={{ color: 'var(--text-color)' }} onClick={() => mark(null)}>Clear</button>
         </div>
       </div>

@@ -20,7 +20,7 @@ export function Sidebar({ isOpen, onClose, theme }: SidebarProps) {
       case 'frappe':
         return 'linear-gradient(180deg, #303336 0%, #414559 50%, #51576d 100%)';
       default:
-        return 'linear-gradient(180deg, #5B4BA8 0%, #6D5BFF 50%, #8B7AFF 100%)';
+        return 'linear-gradient(180deg, #ec4899 0%, #f472b6 50%, #f9a8d4 100%)';
     }
   };
 

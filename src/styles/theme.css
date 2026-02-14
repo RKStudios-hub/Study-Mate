@@ -4,16 +4,16 @@
 :root {
   --bg-color: #fdf2f8;
   --card-bg: #ffffff;
-  --text-color: #4a4a5a;
-  --text-muted: #9ca3af;
+  --text-color: #1f2937;
+  --text-muted: #6b7280;
   --accent-color: #f472b6;
   --accent-dark: #ec4899;
-  --accent-light: #fbcfe8;
+  --accent-light: #fce7f3;
   --secondary-color: #a78bfa;
   --secondary-light: #ddd6fe;
   --tertiary-color: #6ee7b7;
   --input-bg: #f3f4f6;
-  --border-color: rgba(0, 0, 0, 0.06);
+  --border-color: rgba(0, 0, 0, 0.1);
   --border-radius-main: 24px;
   --border-radius-item: 16px;
   --background: #f8fafc;
@@ -37,7 +37,7 @@
   --green: #22c55e;
   --orange: #f59e0b;
   --red: #ef4444;
-  --grey: #9ca3af;
+  --grey: #6b7280;
   --radius: 0.75rem;
   --gradient-start: #fce7f3;
   --gradient-end: #e0e7ff;
