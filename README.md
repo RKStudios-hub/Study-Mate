@@ -20,7 +20,9 @@ Study Mate is a modern web application built to help students and learners stay 
 
 **Works Offline** - All your data stays on your device. No cloud, no accounts, no worries.
 
+
 <img width="1920" height="1080" alt="Banner" src="https://github.com/user-attachments/assets/4901efb1-cd1b-42d2-83b1-47b8cb38c983" />
+
 
 ## What's Inside?
 
