@@ -21,24 +21,101 @@ const Layout: React.FC = () => {
     return saved || 'kawaii';
   });
 
+  const [fontFamily, setFontFamily] = useState(() => {
+    const saved = localStorage.getItem('fontFamily');
+    return saved || 'Default';
+  });
+
   useEffect(() => {
     document.body.setAttribute('data-theme', theme === 'kawaii' ? '' : theme);
   }, [theme]);
 
-  const [rssFeeds, setRssFeeds] = useState<RssFeed[]>(() => {
-    const saved = localStorage.getItem('rssFeeds');
-    return saved ? JSON.parse(saved) : [];
+  useEffect(() => {
+    const fonts: { [key: string]: string } = {
+      'Default': 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      'Serif': 'Georgia, "Times New Roman", Times, serif',
+      'Monospace': '"Courier New", Courier, monospace',
+      'Rounded': '"Nunito", "Comic Sans MS", sans-serif',
+    };
+    document.body.style.fontFamily = fonts[fontFamily] || fonts['Default'];
+    localStorage.setItem('fontFamily', fontFamily);
+  }, [fontFamily]);
+
+  // Debug data - all in one place
+  const getDebugData = () => {
+    const saved = localStorage.getItem('studyMateDebug');
+    return saved ? JSON.parse(saved) : {
+      dailyTimeStudied: 0,
+      dailyTimeDate: '',
+      totalTimeStudied: 0,
+      weeklyStudyData: [],
+      weeklyStudyDate: '',
+      folders: [],
+      rssFeeds: []
+    };
+  };
+
+  const [debugData, setDebugData] = useState(getDebugData);
+
+  // Save debug data helper
+  const saveDebugData = (updates: Partial<typeof debugData>) => {
+    setDebugData(prev => {
+      const newData = { ...prev, ...updates };
+      localStorage.setItem('studyMateDebug', JSON.stringify(newData));
+      return newData;
+    });
+  };
+
+  const [weeklyStudyData, setWeeklyStudyData] = useState<{ day: string; hours: number; date: string }[]>(() => {
+    const data = getDebugData();
+    if (data.weeklyStudyData && data.weeklyStudyData.length > 0) {
+      const today = new Date();
+      const todayStr = today.toLocaleDateString('en-CA');
+      const firstDayOfWeek = new Date(today);
+      firstDayOfWeek.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1));
+      firstDayOfWeek.setHours(0, 0, 0, 0);
+      
+      const savedWeekStart = data.weeklyStudyDate;
+      const currentWeekStart = firstDayOfWeek.toLocaleDateString('en-CA');
+      
+      if (savedWeekStart === currentWeekStart) {
+        return data.weeklyStudyData;
+      }
+    }
+    return [];
+  });
+  
+  const [weeklyStudyDate, setWeeklyStudyDate] = useState(() => {
+    const data = getDebugData();
+    const today = new Date();
+    const firstDayOfWeek = new Date(today);
+    firstDayOfWeek.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1));
+    firstDayOfWeek.setHours(0, 0, 0, 0);
+    return data.weeklyStudyDate || firstDayOfWeek.toLocaleDateString('en-CA');
   });
 
-  const [folders, setFolders] = useState<Folder[]>(() => {
-    const saved = localStorage.getItem('folders');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [rssFeeds, setRssFeeds] = useState<RssFeed[]>(() => getDebugData().rssFeeds || []);
+
+  const [folders, setFolders] = useState<Folder[]>(() => getDebugData().folders || []);
+
+  // Save weekly study data when it changes
+  useEffect(() => {
+    if (weeklyStudyData.length > 0) {
+      saveDebugData({ weeklyStudyData, weeklyStudyDate });
+    }
+  }, [weeklyStudyData, weeklyStudyDate]);
 
   const [timeStudied, setTimeStudied] = useState<number>(() => {
-    const saved = localStorage.getItem('timeStudied');
-    return saved ? parseInt(saved, 10) : 0;
+    const data = getDebugData();
+    const currentDate = new Date().toDateString();
+    if (data.dailyTimeDate === currentDate) {
+      return data.dailyTimeStudied || 0;
+    }
+    return 0;
   });
+  
+  const [totalTimeStudied, setTotalTimeStudied] = useState<number>(() => getDebugData().totalTimeStudied || 0);
+  
   const [isRunning, setIsRunning] = useState(true);
 
   const {
@@ -70,8 +147,9 @@ const Layout: React.FC = () => {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
+  // Save RSS feeds to debug data
   useEffect(() => {
-    localStorage.setItem('rssFeeds', JSON.stringify(rssFeeds));
+    saveDebugData({ rssFeeds });
   }, [rssFeeds]);
 
   const addRssFeed = (feed: RssFeed) => {
@@ -107,7 +185,7 @@ const Layout: React.FC = () => {
         folders: serializableFolders(folder.folders),
       }));
     };
-    localStorage.setItem('folders', JSON.stringify(serializableFolders(folders)));
+    saveDebugData({ folders: serializableFolders(folders) });
   }, [folders]);
 
   const calculateTotalFiles = () => {
@@ -160,6 +238,7 @@ const Layout: React.FC = () => {
     if (isRunning) {
       interval = setInterval(() => {
         setTimeStudied(prevTime => prevTime + 1);
+        setTotalTimeStudied(prevTime => prevTime + 1);
       }, 1000);
     } else if (interval) {
       clearInterval(interval);
@@ -167,15 +246,24 @@ const Layout: React.FC = () => {
 
     return () => {
       if (interval) clearInterval(interval);
-      localStorage.setItem('timeStudied', timeStudied.toString());
+      // Save to debug data
+      saveDebugData({
+        dailyTimeStudied: timeStudied,
+        dailyTimeDate: new Date().toDateString(),
+        totalTimeStudied: totalTimeStudied
+      });
     };
-  }, [isRunning, timeStudied]);
+  }, [isRunning, timeStudied, totalTimeStudied]);
 
   useEffect(() => {
     if (!isRunning) {
-      localStorage.setItem('timeStudied', timeStudied.toString());
+      saveDebugData({
+        dailyTimeStudied: timeStudied,
+        dailyTimeDate: new Date().toDateString(),
+        totalTimeStudied: totalTimeStudied
+      });
     }
-  }, [isRunning, timeStudied]);
+  }, [isRunning, timeStudied, totalTimeStudied]);
 
   const onToggleTimer = useCallback(() => setIsRunning(prev => !prev), []);
   const onResetTimer = useCallback(() => {
@@ -289,6 +377,7 @@ const Layout: React.FC = () => {
       <main className="min-h-screen">
         <Outlet context={{
           timeStudied,
+          totalTimeStudied,
           formatTime,
           totalFiles,
           folders,
@@ -314,8 +403,13 @@ const Layout: React.FC = () => {
           setIsDarkMode,
           theme,
           setTheme,
+          fontFamily,
+          setFontFamily,
           saveUploadedFile, // New
           deleteUploadedFile, // New
+          weeklyStudyData,
+          weeklyStudyDate,
+          setWeeklyStudyData,
         } as OutletContext} />
       </main>
 

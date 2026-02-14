@@ -36,6 +36,7 @@ export interface RssFeed {
 
 export interface OutletContext {
   timeStudied: number;
+  totalTimeStudied: number;
   formatTime: (totalSeconds: number) => string;
   totalFiles: number;
   folders: Folder[];
@@ -61,6 +62,11 @@ export interface OutletContext {
   setIsDarkMode: React.Dispatch<React.SetStateAction<boolean>>;
   theme: string;
   setTheme: React.Dispatch<React.SetStateAction<string>>;
-  saveUploadedFile: (file: globalThis.File, folderId: string) => Promise<File | undefined>; // New prop for saving files
-  deleteUploadedFile: (folderId: string, fileId: string) => Promise<void>; // New prop for deleting files
+  fontFamily: string;
+  setFontFamily: React.Dispatch<React.SetStateAction<string>>;
+  saveUploadedFile: (file: globalThis.File, folderId: string) => Promise<File | undefined>;
+  deleteUploadedFile: (folderId: string, fileId: string) => Promise<void>;
+  weeklyStudyData: { day: string; hours: number; date: string }[];
+  weeklyStudyDate: string;
+  setWeeklyStudyData: React.Dispatch<React.SetStateAction<{ day: string; hours: number; date: string }[]>>;
 }

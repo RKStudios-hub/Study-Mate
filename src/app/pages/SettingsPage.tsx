@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { OutletContext, RssFeed } from '../../types';
 import { Plus, Edit, Trash2, Save } from 'lucide-react';
@@ -8,18 +8,29 @@ const themes = [
   { id: 'kawaii', name: 'Kawaii', icon: 'fa-solid fa-spa', color: '#f472b6' },
   { id: 'royal', name: 'Royal Dark', icon: 'fa-solid fa-crown', color: '#9d6dff' },
   { id: 'catpuccin', name: 'Catpuccin Mocha', icon: 'fa-solid fa-cat', color: '#89b4fa' },
-  { id: 'frappe', name: 'Catpuccin Frappe', icon: 'fa-solid fa-mug-hot', color: '#81c8be' },
+  { id: 'frappe', name: 'Catppuccin Frappe', icon: 'fa-solid fa-mug-hot', color: '#81c8be' },
+];
+
+const fonts = [
+  { id: 'Default', name: 'Default', icon: 'fa-solid fa-font' },
+  { id: 'Serif', name: 'Serif', icon: 'fa-solid fa-heading' },
+  { id: 'Monospace', name: 'Monospace', icon: 'fa-solid fa-code' },
+  { id: 'Rounded', name: 'Rounded', icon: 'fa-solid fa-circle' },
 ];
 
 export default function SettingsPage() {
-  const { rssFeeds, addRssFeed, updateRssFeed, deleteRssFeed, theme, setTheme } = useOutletContext<OutletContext>();
+  const { rssFeeds, addRssFeed, updateRssFeed, deleteRssFeed, theme, setTheme, fontFamily, setFontFamily } = useOutletContext<OutletContext>();
   const [newFeedName, setNewFeedName] = useState('');
   const [newFeedUrl, setNewFeedUrl] = useState('');
   const [editingFeedId, setEditingFeedId] = useState<string | null>(null);
   const [editingFeedName, setEditingFeedName] = useState('');
   const [editingFeedUrl, setEditingFeedUrl] = useState('');
 
-  const [fontStyle, setFontStyle] = useState('Default');
+  const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
+  const [isFontDropdownOpen, setIsFontDropdownOpen] = useState(false);
+  const themeDropdownRef = useRef<HTMLDivElement>(null);
+  const fontDropdownRef = useRef<HTMLDivElement>(null);
+
   const [isGlassEffect, setIsGlassEffect] = useState(false);
   const [pushNotifications, setPushNotifications] = useState(true);
   const [notificationTypes, setNotificationTypes] = useState({
@@ -27,6 +38,19 @@ export default function SettingsPage() {
     deadlines: true,
     messages: false,
   });
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (themeDropdownRef.current && !themeDropdownRef.current.contains(event.target as Node)) {
+        setIsThemeDropdownOpen(false);
+      }
+      if (fontDropdownRef.current && !fontDropdownRef.current.contains(event.target as Node)) {
+        setIsFontDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleAddFeed = () => {
     if (newFeedName && newFeedUrl) {
@@ -68,46 +92,95 @@ export default function SettingsPage() {
 
       <SettingsSection title="Appearance">
         <div className="space-y-4">
+          {/* Theme Selector */}
           <div>
             <label className="block text-sm font-medium mb-3" style={{ color: 'var(--text-muted)' }}>Theme</label>
-            <div className="relative">
-              <select
-                value={theme}
-                onChange={(e) => setTheme(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border appearance-none cursor-pointer focus:outline-none focus:ring-2"
-                style={{ 
-                  backgroundColor: 'var(--input-bg)', 
-                  color: 'var(--text-color)', 
+            <div className="relative" ref={themeDropdownRef}>
+              <button
+                onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-all"
+                style={{
+                  backgroundColor: 'var(--input-bg)',
                   borderColor: 'var(--border-color)',
-                  '--tw-ring-color': 'var(--accent-color)',
-                } as React.CSSProperties}
+                }}
+              >
+                <i className={`${themes.find(t => t.id === theme)?.icon} text-lg`} style={{ color: themes.find(t => t.id === theme)?.color }}></i>
+                <span style={{ color: 'var(--text-color)', flex: 1, textAlign: 'left' }}>{themes.find(t => t.id === theme)?.name}</span>
+                <i className="fa-solid fa-chevron-down text-sm" style={{ color: 'var(--text-muted)' }}></i>
+              </button>
+              <div
+                className="absolute top-full left-0 right-0 mt-2 rounded-xl overflow-hidden z-50 transition-all"
+                style={{
+                  backgroundColor: 'var(--card-bg)',
+                  border: '1px solid var(--border-color)',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+                  opacity: isThemeDropdownOpen ? 1 : 0,
+                  visibility: isThemeDropdownOpen ? 'visible' : 'hidden',
+                  transform: isThemeDropdownOpen ? 'translateY(0)' : 'translateY(-10px)',
+                }}
               >
                 {themes.map((t) => (
-                  <option key={t.id} value={t.id}>
-                    {t.name}
-                  </option>
+                  <button
+                    key={t.id}
+                    onClick={() => { setTheme(t.id); setIsThemeDropdownOpen(false); }}
+                    className="w-full flex items-center gap-3 px-4 py-3 transition-colors"
+                    style={{
+                      backgroundColor: theme === t.id ? 'var(--accent-light)' : 'transparent',
+                      color: 'var(--text-color)',
+                    }}
+                  >
+                    <i className={t.icon} style={{ color: t.color }}></i>
+                    <span>{t.name}</span>
+                  </button>
                 ))}
-              </select>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none" style={{ color: 'var(--text-muted)' }}>
-                <i className={`${themes.find(t => t.id === theme)?.icon} text-lg`} style={{ color: themes.find(t => t.id === theme)?.color }}></i>
               </div>
             </div>
           </div>
-        </div>
-        <div className="flex items-center justify-between">
-          <span style={{ color: 'var(--text-muted)' }}>Font Style</span>
-          <select value={fontStyle} onChange={(e) => setFontStyle(e.target.value)} className="px-3 py-1 border rounded-lg focus:outline-none focus:ring-1" style={{ backgroundColor: 'var(--input-bg)', color: 'var(--text-color)', borderColor: 'var(--border-color)' }}>
-            <option>Default</option>
-            <option>Serif</option>
-            <option>Monospace</option>
-          </select>
-        </div>
-        <div className="flex items-center justify-between">
-          <span style={{ color: 'var(--text-muted)' }}>Glass Effect</span>
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" checked={isGlassEffect} onChange={() => setIsGlassEffect(!isGlassEffect)} className="sr-only peer" />
-            <div className="w-11 h-6 rounded-full peer peer-focus:ring-2 peer-focus:ring-[var(--accent-color)] after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all" style={{ backgroundColor: isGlassEffect ? 'var(--accent-color)' : 'var(--input-bg)' }}></div>
-          </label>
+
+          {/* Font Selector */}
+          <div>
+            <label className="block text-sm font-medium mb-3" style={{ color: 'var(--text-muted)' }}>Font Style</label>
+            <div className="relative" ref={fontDropdownRef}>
+              <button
+                onClick={() => setIsFontDropdownOpen(!isFontDropdownOpen)}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-all"
+                style={{
+                  backgroundColor: 'var(--input-bg)',
+                  borderColor: 'var(--border-color)',
+                }}
+              >
+                <i className={`${fonts.find(f => f.id === fontFamily)?.icon} text-lg`} style={{ color: 'var(--accent-color)' }}></i>
+                <span style={{ color: 'var(--text-color)', flex: 1, textAlign: 'left' }}>{fonts.find(f => f.id === fontFamily)?.name}</span>
+                <i className="fa-solid fa-chevron-down text-sm" style={{ color: 'var(--text-muted)' }}></i>
+              </button>
+              <div
+                className="absolute top-full left-0 right-0 mt-2 rounded-xl overflow-hidden z-50 transition-all"
+                style={{
+                  backgroundColor: 'var(--card-bg)',
+                  border: '1px solid var(--border-color)',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+                  opacity: isFontDropdownOpen ? 1 : 0,
+                  visibility: isFontDropdownOpen ? 'visible' : 'hidden',
+                  transform: isFontDropdownOpen ? 'translateY(0)' : 'translateY(-10px)',
+                }}
+              >
+                {fonts.map((f) => (
+                  <button
+                    key={f.id}
+                    onClick={() => { setFontFamily(f.id); setIsFontDropdownOpen(false); }}
+                    className="w-full flex items-center gap-3 px-4 py-3 transition-colors"
+                    style={{
+                      backgroundColor: fontFamily === f.id ? 'var(--accent-light)' : 'transparent',
+                      color: 'var(--text-color)',
+                    }}
+                  >
+                    <i className={f.icon} style={{ color: 'var(--accent-color)' }}></i>
+                    <span>{f.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </SettingsSection>
 

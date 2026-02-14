@@ -29,6 +29,9 @@ export default function Dashboard() {
     deleteUploadedFile,
     isDarkMode,
     theme,
+    weeklyStudyData,
+    weeklyStudyDate,
+    setWeeklyStudyData,
   } = useOutletContext<OutletContext>();
 
   const getAccentColor = () => {
@@ -62,82 +65,72 @@ export default function Dashboard() {
   });
 
   const [weeklyData, setWeeklyData] = useState(() => {
-    const stored = localStorage.getItem('weeklyStudyData');
-    if (stored) {
-      const parsedData = JSON.parse(stored);
-      const today = new Date();
-      const firstDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1)));
-      firstDayOfWeek.setHours(0, 0, 0, 0);
-
-      if (parsedData.length === DAYS.length && new Date(parsedData[0].date) >= firstDayOfWeek) {
-        return parsedData;
-      }
+    if (weeklyStudyData && weeklyStudyData.length > 0) {
+      return weeklyStudyData;
     }
+    const today = new Date();
+    const firstDayOfWeek = new Date(today);
+    firstDayOfWeek.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1));
+    firstDayOfWeek.setHours(0, 0, 0, 0);
+
     return DAYS.map((day, index) => {
-      const date = new Date();
-      date.setDate(date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1) + index);
-      return { day, hours: 0, date: date.toISOString().split('T')[0] };
+      const date = new Date(firstDayOfWeek);
+      date.setDate(firstDayOfWeek.getDate() + index);
+      const dateStr = date.toLocaleDateString('en-CA');
+      return { 
+        day, 
+        hours: 0,
+        date: dateStr 
+      };
     });
   });
 
   const lastTimeStudiedRef = useRef(timeStudied);
 
+  // Update today's hours when timer changes
   useEffect(() => {
     const today = new Date();
-    const currentDayIso = today.toISOString().split('T')[0];
-
-    let dayIndex = DAYS.findIndex(dayName => dayName === today.toLocaleDateString('en-US', { weekday: 'short' }));
-    if (dayIndex === -1) {
-      dayIndex = today.getDay() === 0 ? 6 : today.getDay() - 1;
-    }
+    const todayStr = today.toLocaleDateString('en-CA');
+    
+    const dayIndex = DAYS.findIndex(dayName => dayName === today.toLocaleDateString('en-US', { weekday: 'short' }));
+    const correctIndex = dayIndex === -1 ? (today.getDay() === 0 ? 6 : today.getDay() - 1) : dayIndex;
 
     setWeeklyData(prevWeeklyData => {
       let updatedWeeklyData = [...prevWeeklyData];
-      let needsReinitialization = false;
-
+      
+      // Check if week changed - reset all days
       const firstDayOfWeek = new Date(today);
       firstDayOfWeek.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1));
       firstDayOfWeek.setHours(0, 0, 0, 0);
-
-      if (prevWeeklyData.length === 0 || new Date(prevWeeklyData[0].date) < firstDayOfWeek) {
-        needsReinitialization = true;
-        updatedWeeklyData = DAYS.map((dayName, index) => {
+      const currentWeekStart = firstDayOfWeek.toLocaleDateString('en-CA');
+      
+      if (weeklyStudyDate !== currentWeekStart) {
+        // New week - reset all days
+        updatedWeeklyData = DAYS.map((day, index) => {
           const date = new Date(firstDayOfWeek);
           date.setDate(firstDayOfWeek.getDate() + index);
-          return { day: dayName, hours: 0, date: date.toISOString().split('T')[0] };
+          return { day, hours: 0, date: date.toLocaleDateString('en-CA') };
         });
-        dayIndex = today.getDay() === 0 ? 6 : today.getDay() - 1;
       }
-
-      const currentDayEntryIndex = updatedWeeklyData.findIndex(d => d.date === currentDayIso);
-      if (currentDayEntryIndex === -1) {
-        console.warn('Current day entry not found, re-initializing weekly data.');
-        needsReinitialization = true;
-        updatedWeeklyData = DAYS.map((dayName, index) => {
-          const date = new Date(firstDayOfWeek);
-          date.setDate(firstDayOfWeek.getDate() + index);
-          return { day: dayName, hours: 0, date: date.toISOString().split('T')[0] };
-        });
-        dayIndex = today.getDay() === 0 ? 6 : today.getDay() - 1;
-      } else if (!needsReinitialization) {
-        dayIndex = currentDayEntryIndex;
-      }
-
+      
+      // Update today's hours based on timer
       const delta = timeStudied - lastTimeStudiedRef.current;
-      if (delta > 0) {
-        const currentHours = updatedWeeklyData[dayIndex].hours;
-        updatedWeeklyData[dayIndex] = {
-          ...updatedWeeklyData[dayIndex],
-          hours: parseFloat((currentHours + (delta / 3600)).toFixed(2))
+      if (delta > 0 && correctIndex >= 0 && correctIndex < updatedWeeklyData.length) {
+        updatedWeeklyData[correctIndex] = {
+          ...updatedWeeklyData[correctIndex],
+          hours: updatedWeeklyData[correctIndex].hours + (delta / 3600)
         };
       }
       
       lastTimeStudiedRef.current = timeStudied;
-
-      localStorage.setItem('weeklyStudyData', JSON.stringify(updatedWeeklyData));
       return updatedWeeklyData;
     });
-  }, [timeStudied]);
+  }, [timeStudied, weeklyStudyDate]);
+
+  // Sync weekly data to parent (Layout) - separate effect to avoid setState during render
+  useEffect(() => {
+    setWeeklyStudyData(weeklyData);
+  }, [weeklyData, setWeeklyStudyData]);
 
 
   const handleCreateFolder = useCallback((name: string, color: string, parentFolderId?: string) => {

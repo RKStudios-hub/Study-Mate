@@ -3,7 +3,7 @@ import { useOutletContext } from 'react-router-dom';
 import { OutletContext } from '../../types';
 
 export default function ProfilePage() {
-  const { timeStudied, formatTotalStudyTime, theme } = useOutletContext<OutletContext>();
+  const { totalTimeStudied, formatTotalStudyTime, theme } = useOutletContext<OutletContext>();
 
   const getAccentColor = () => {
     switch(theme) {
@@ -24,12 +24,12 @@ export default function ProfilePage() {
         backgroundColor: 'var(--card-bg)', 
         border: '1px solid var(--border-color)' 
       }}>
-        <h2 className="text-xl font-semibold mb-4" style={{ color: 'var(--text-color)' }}>Total Time Spent Studying</h2>
+        <h2 className="text-xl font-semibold mb-4" style={{ color: 'var(--text-color)' }}>Total Time Using App</h2>
         <p className="text-4xl font-bold" style={{ color: accentColor }}>
-          {formatTotalStudyTime(timeStudied)}
+          {formatTotalStudyTime(totalTimeStudied)}
         </p>
         <p className="text-sm mt-2" style={{ color: 'var(--text-muted)' }}>
-          This is the total accumulated time you've spent using the app. The timer runs continuously in the background.
+          This is the total accumulated time you've spent using the app.
         </p>
       </div>
 
