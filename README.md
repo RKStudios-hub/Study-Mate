@@ -1,6 +1,4 @@
-# Study Mate - Your Personal Study Companion
-<img width="1280" height="1280" alt="LOGO" src="https://github.com/user-attachments/assets/70a18e15-3521-4b8f-8fe9-4c2b7e0e69c8" />
-
+<img width="1280" height="280" alt="LOGO" src="https://github.com/user-attachments/assets/70a18e15-3521-4b8f-8fe9-4c2b7e0e69c8" /> # Study Mate - Your Personal Study Companion
 
 
 Tired of juggling between different apps to manage your studies? Meet **Study Mate** - your all-in-one study management app that brings everything together in one beautiful interface.
